@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>우리 곧 만나요 | Love Ticket</title>
+
+  <style>
+    :root {
+      --pink:    #e977a5;
+      --lav:     #c99dff;
+      --text:    #2d1f2a;
+      --muted:   #9c7d8e;
+      --bg:      #f3dcea;
+      --white:   #ffffff;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      background-image:
+        radial-gradient(ellipse at top left,    rgba(255,210,235,0.9) 0%, transparent 55%),
+        radial-gradient(ellipse at bottom right, rgba(220,200,255,0.8) 0%, transparent 50%);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 28px 16px 56px;
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue",
+        "Hiragino Sans", "Noto Sans KR", "Noto Sans JP", Arial, sans-serif;
+      color: var(--text);
+    }
+
+    /* ═══════════════════════════
+       TICKET SHELL
+    ═══════════════════════════ */
+    .ticket {
+      width: 100%;
+      max-width: 390px;
+      background: var(--white);
+      border-radius: 26px;
+      box-shadow:
+        0 1px 0 rgba(233,119,165,0.18),
+        0 10px 40px rgba(180,100,150,0.22),
+        0 40px 80px rgba(180,100,150,0.1);
+      position: relative;
+    }
+
+    /* ═══════════════════════════
+       HEADER
+    ═══════════════════════════ */
+    .ticket-header {
+      background: linear-gradient(120deg, #e977a5 0%, #c99dff 100%);
+      border-radius: 26px 26px 0 0;
+      padding: 18px 22px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ticket-header::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        -55deg,
+        rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px,
+        transparent 1px, transparent 18px
+      );
+    }
+
+    .th-left .th-eyebrow {
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      opacity: 0.7;
+      font-weight: 700;
+    }
+
+    .th-left .th-title {
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      margin-top: 2px;
+    }
+
+    .th-badge {
+      background: rgba(255,255,255,0.22);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      position: relative;
+    }
+
+    /* ═══════════════════════════
+       PHOTO
+    ═══════════════════════════ */
+    .ticket-photo {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 3 / 2;
+      overflow: hidden;
+      background:
+        linear-gradient(135deg, rgba(255,232,241,0.92), rgba(245,236,255,0.92)),
+        repeating-linear-gradient(-45deg,
+          rgba(255,255,255,0.3), rgba(255,255,255,0.3) 5px,
+          rgba(255,255,255,0.1) 5px, rgba(255,255,255,0.1) 10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .ticket-photo img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      opacity: 0;
+      transition: opacity 1s ease;
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: high-quality;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      will-change: opacity;
+    }
+
+    .photo-placeholder {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 20px;
+      color: var(--muted);
+    }
+
+    .ph-icon {
+      font-size: 34px;
+      display: block;
+      margin-bottom: 8px;
+      animation: heartbeat 1.8s infinite;
+    }
+
+    .photo-placeholder p {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 3px;
+    }
+
+    .photo-placeholder small {
+      font-size: 12px;
+    }
+
+    .add-photo-btn {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      z-index: 10;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.9);
+      color: var(--pink);
+      font-size: 20px;
+      line-height: 34px;
+      text-align: center;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(233,119,165,0.3);
+      opacity: 0;
+      transition: opacity 0.2s;
+      user-select: none;
+    }
+
+    .ticket-photo:hover .add-photo-btn { opacity: 1; }
+
+    /* ═══════════════════════════
+       ROUTE SECTION
+    ═══════════════════════════ */
+    .ticket-body {
+      padding: 20px 22px 16px;
+    }
+
+    .route-row {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .airport { line-height: 1.15; }
+    .airport:last-child { text-align: right; }
+
+    .airport-code {
+      font-size: 38px;
+      font-weight: 900;
+      letter-spacing: -0.05em;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .airport-city {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 600;
+      margin-top: 3px;
+    }
+
+    .flight-mid {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .flight-track {
+      position: relative;
+      width: 88px;
+      height: 30px;
+    }
+
+    .plane-anim {
+      position: absolute;
+      font-size: 20px;
+      top: 0;
+      left: 0;
+      animation: fly 3.8s ease-in-out infinite;
+      filter: drop-shadow(0 2px 6px rgba(233,119,165,0.4));
+    }
+
+    @keyframes fly {
+      0%   { left: 0%;  transform: translateX(0)    rotate(5deg); }
+      50%  { left: 72%; transform: translateX(-50%) rotate(1deg); }
+      100% { left: 0%;  transform: translateX(0)    rotate(5deg); }
+    }
+
+    .flight-dash {
+      width: 88px;
+      border-top: 2px dashed rgba(233,119,165,0.35);
+      margin-top: 8px;
+    }
+
+    .round-trip {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    /* ═══════════════════════════
+       META BAR
+    ═══════════════════════════ */
+    .meta-bar {
+      display: grid;
+      grid-template-columns: 1fr 1px 1fr 1px 1fr;
+      align-items: center;
+      border-top: 1px solid rgba(233,119,165,0.14);
+      border-bottom: 1px solid rgba(233,119,165,0.14);
+      padding: 10px 0;
+      margin-bottom: 18px;
+      gap: 0;
+    }
+
+    .meta-divider {
+      height: 28px;
+      width: 1px;
+      background: rgba(233,119,165,0.18);
+    }
+
+    .meta-cell {
+      text-align: center;
+      padding: 0 8px;
+    }
+
+    .meta-label {
+      font-size: 8.5px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 700;
+      margin-bottom: 3px;
+    }
+
+    .meta-val {
+      font-size: 12px;
+      font-weight: 900;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* ═══════════════════════════
+       COUNTDOWN
+    ═══════════════════════════ */
+    .countdown-block {
+      text-align: center;
+      padding: 4px 0 8px;
+    }
+
+    .days-display {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 6px;
+      line-height: 1;
+    }
+
+    .days-num {
+      font-size: 76px;
+      font-weight: 900;
+      letter-spacing: -0.08em;
+      color: var(--pink);
+      line-height: 1;
+    }
+
+    .days-unit {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+
+    .sleep-text {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text);
+      margin-top: 8px;
+    }
+
+    .today-msg {
+      display: none;
+      margin-top: 14px;
+      padding: 12px 20px;
+      background: linear-gradient(120deg, rgba(233,119,165,0.12), rgba(201,157,255,0.12));
+      border: 1.5px solid rgba(233,119,165,0.25);
+      border-radius: 999px;
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--pink);
+      letter-spacing: -0.01em;
+      animation: pop-in 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+
+    @keyframes pop-in {
+      from { transform: scale(0.7); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+
+    .love-msg {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 6px;
+      line-height: 1.55;
+    }
+
+    .date-chip {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(233,119,165,0.08);
+      color: #c05882;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    /* ═══════════════════════════
+       TEAR LINE
+    ═══════════════════════════ */
+    .tear-line {
+      display: flex;
+      align-items: center;
+      margin: 6px 0;
+    }
+
+    .tear-notch {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--bg);
+      flex-shrink: 0;
+      margin: 0 -1px;
+    }
+
+    .tear-dashes {
+      flex: 1;
+      border-top: 2px dashed rgba(233,119,165,0.32);
+    }
+
+    .tear-scissors {
+      font-size: 14px;
+      padding: 0 6px;
+      color: rgba(233,119,165,0.5);
+      flex-shrink: 0;
+      position: relative;
+      top: -1px;
+    }
+
+    /* ═══════════════════════════
+       STUB
+    ═══════════════════════════ */
+    .ticket-stub {
+      padding: 14px 22px 22px;
+    }
+
+    .time-weather-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .tw-chip {
+      background: #fdf4f9;
+      border: 1px solid rgba(233,119,165,0.15);
+      border-radius: 16px;
+      padding: 10px 12px;
+    }
+
+    .tw-flag {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .tw-time {
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      line-height: 1;
+      margin-bottom: 3px;
+    }
+
+    .tw-weather {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    /* date picker */
+    .date-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #fdf4f9;
+      border: 1px solid rgba(233,119,165,0.18);
+      border-radius: 16px;
+      padding: 10px 14px;
+      margin-bottom: 14px;
+    }
+
+    .date-row-label {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--muted);
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    .date-row input[type="date"] {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text);
+      outline: none;
+      cursor: pointer;
+      min-width: 0;
+    }
+
+    /* barcode */
+    .barcode-wrap {
+      display: flex;
+      align-items: flex-end;
+      gap: 2.5px;
+      height: 40px;
+      padding: 0 4px;
+      opacity: 0.15;
+    }
+
+    .bc-bar {
+      background: var(--text);
+      border-radius: 1px;
+      flex-shrink: 0;
+    }
+
+    .footer-note {
+      text-align: center;
+      font-size: 11px;
+      color: rgba(160,110,140,0.65);
+      margin-top: 14px;
+      letter-spacing: 0.06em;
+    }
+
+    /* ═══════════════════════════
+       KEYFRAMES
+    ═══════════════════════════ */
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      20%       { transform: scale(1.1); }
+      40%       { transform: scale(0.97); }
+      60%       { transform: scale(1.07); }
+    }
+
+    @media (max-width: 360px) {
+      .days-num    { font-size: 58px; }
+      .airport-code { font-size: 30px; }
+      .meta-val    { font-size: 11px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="ticket">
+
+    <!-- ── Header ── -->
+    <header class="ticket-header">
+      <div class="th-left">
+        <div class="th-title">우리 곧 만나요</div>
+      </div>
+      <div class="th-badge">NOV·11·2025 ✈</div>
+    </header>
+
+    <!-- ── Photo ── -->
+    <div class="ticket-photo" id="photoArea">
+      <img id="photoA" alt="" />
+      <img id="photoB" alt="" />
+      <div class="photo-placeholder" id="photoPlaceholder">
+        <span class="ph-icon">🤍</span>
+        <p>写真をタップして追加</p>
+        <small>複数まとめて選択できます</small>
+      </div>
+      <label class="add-photo-btn" for="photoUploadMulti" title="写真を追加">＋</label>
+      <input type="file" id="photoUploadMulti" accept="image/*" multiple style="display:none" />
+    </div>
+
+    <!-- ── Body ── -->
+    <div class="ticket-body">
+
+      <!-- Route -->
+      <div class="route-row">
+        <div class="airport">
+          <div class="airport-code">BKK</div>
+          <div class="airport-city">Bangkok</div>
+        </div>
+        <div class="flight-mid">
+          <div class="flight-track">
+            <span class="plane-anim">✈️</span>
+            <div class="flight-dash"></div>
+          </div>
+          <div class="round-trip">Round Trip</div>
+        </div>
+        <div class="airport">
+          <div class="airport-code">ICN</div>
+          <div class="airport-city">Seoul</div>
+        </div>
+      </div>
+
+      <!-- Meta bar -->
+      <div class="meta-bar">
+        <div class="meta-cell">
+          <div class="meta-label">Passenger</div>
+          <div class="meta-val" id="namesText">--</div>
+        </div>
+        <div class="meta-divider"></div>
+        <div class="meta-cell">
+          <div class="meta-label">Date</div>
+          <div class="meta-val" id="metaDate">--</div>
+        </div>
+        <div class="meta-divider"></div>
+        <div class="meta-cell">
+          <div class="meta-label">Class</div>
+          <div class="meta-val">LOVE ♡</div>
+        </div>
+      </div>
+
+      <!-- Countdown -->
+      <div class="countdown-block">
+        <div class="days-display">
+          <span class="days-num" id="daysNumber">--</span>
+          <span class="days-unit">일</span>
+        </div>
+        <div class="sleep-text" id="sleepText"></div>
+        <div class="today-msg" id="todayMsg"></div>
+        <div class="love-msg" id="loveMessage"></div>
+        <div class="date-chip" id="dateChip"></div>
+      </div>
+    </div>
+
+    <!-- ── Tear Line ── -->
+    <div class="tear-line">
+      <div class="tear-notch"></div>
+      <div class="tear-dashes"></div>
+      <span class="tear-scissors">✂</span>
+      <div class="tear-dashes"></div>
+      <div class="tear-notch"></div>
+    </div>
+
+    <!-- ── Stub ── -->
+    <div class="ticket-stub">
+
+      <div class="time-weather-grid">
+        <div class="tw-chip">
+          <div class="tw-flag">🇰🇷 Seoul</div>
+          <div class="tw-time" id="koreaTime">--:--</div>
+          <div class="tw-weather" id="koreaWeather">--</div>
+        </div>
+        <div class="tw-chip">
+          <div class="tw-flag">🇹🇭 Bangkok</div>
+          <div class="tw-time" id="thaiTime">--:--</div>
+          <div class="tw-weather" id="thaiWeather">--</div>
+        </div>
+      </div>
+
+      <div class="date-row">
+        <span class="date-row-label">📅 次に会う日</span>
+        <input type="date" id="meetDateInput" />
+      </div>
+
+      <div class="barcode-wrap" id="barcode"></div>
+
+      <p class="footer-note">오늘도 사랑해 · 보고 싶어 · 조금만 더 기다리자</p>
+    </div>
+
+  </div><!-- /ticket -->
+
+  <script>
+    // =====================================================
+    // 設定値
+    // =====================================================
+    const CONFIG = {
+      nextMeetDate:   "2026-08-23",
+      girlfriendName: "연제",
+      boyfriendName:  "아키라",
+      message:        "조금만 더 기다리면 만날 수 있어요",
+    };
+
+    // =====================================================
+    // 天気 (Open-Meteo API)
+    // =====================================================
+    const LOCATIONS = {
+      korea:   { name: "서울",    latitude: 37.5665, longitude: 126.9780, timezone: "Asia/Seoul"   },
+      thailand:{ name: "Bangkok", latitude: 13.7563, longitude: 100.5018, timezone: "Asia/Bangkok" }
+    };
+
+    function weatherCodeToText(code, lang = "ko") {
+      const map = {
+        ko: { 0:"맑음", 1:"대체로 맑음", 2:"부분적으로 흐림", 3:"흐림", 45:"안개", 48:"서리 안개",
+              51:"약한 이슬비", 53:"이슬비", 55:"강한 이슬비", 61:"약한 비", 63:"비", 65:"강한 비",
+              71:"약한 눈", 73:"눈", 75:"강한 눈", 80:"약한 소나기", 81:"소나기", 82:"강한 소나기", 95:"천둥번개" },
+        ja: { 0:"晴れ", 1:"ほぼ晴れ", 2:"一部くもり", 3:"くもり", 45:"霧", 48:"霧氷",
+              51:"弱い霧雨", 53:"霧雨", 55:"強い霧雨", 61:"弱い雨", 63:"雨", 65:"強い雨",
+              71:"弱い雪", 73:"雪", 75:"強い雪", 80:"弱いにわか雨", 81:"にわか雨", 82:"強いにわか雨", 95:"雷雨" }
+      };
+      return map[lang][code] || (lang === "ko" ? "날씨 정보" : "天気情報");
+    }
+
+    async function fetchWeather(location, lang) {
+      const url = `https://api.open-meteo.com/v1/forecast`
+        + `?latitude=${location.latitude}`
+        + `&longitude=${location.longitude}`
+        + `&current=temperature_2m,weather_code`
+        + `&timezone=${encodeURIComponent(location.timezone)}`;
+      const res  = await fetch(url);
+      const data = await res.json();
+      const temp = Math.round(data.current.temperature_2m);
+      return `${location.name} ${temp}°C · ${weatherCodeToText(data.current.weather_code, lang)}`;
+    }
+
+    // =====================================================
+    // カウントダウン韓国語メッセージ (残り日数 0〜30)
+    // =====================================================
+    const MESSAGES = [
+      "드디어 만난다. ❤️",                        // 0
+      "내일 드디어 만난다.",                        // 1
+      "오늘은 괜히 더 설렌다.",                     // 2
+      "빨리 안아주고 싶다.",                        // 3
+      "거의 다 왔어.",                             // 4
+      "점점 실감이 난다.",                          // 5
+      "벌써부터 엄청 설레.",                        // 6
+      "다음 주면 보네.",                            // 7
+      "이제 진짜 코앞이네.",                        // 8
+      "자꾸 만나는 날만 생각해.",                   // 9
+      "벌써부터 설렌다.",                           // 10
+      "빨리 만나고 싶다.",                          // 11
+      "점점 더 기대된다.",                          // 12
+      "이젠 진짜 얼마 안 남은 거잖아.",             // 13
+      "슬슬 설레기 시작한다.",                      // 14
+      "자꾸 만나는 날 상상이 돼.",                  // 15
+      "이제 거의 다 온 거 같아.",                   // 16
+      "매일 줄어가는 게 느껴진다.",                 // 17
+      "자꾸 설레.",                               // 18
+      "곧 보네. 뭐 할지 자꾸 생각해.",             // 19
+      "오늘도 하루 가까워졌네.",                    // 20
+      "생각보다 빨리 왔네.",                        // 21
+      "오늘도 하루 더 가까워졌어.",                 // 22
+      "자꾸 기대돼.",                             // 23
+      "만나면 뭐 할지 자꾸 생각해.",               // 24
+      "뭐 먹을지 생각해놨어.",                      // 25
+      "슬슬 카운트가 짧아지네.",                    // 26
+      "자꾸 만나는 날 카운트하게 돼.",              // 27
+      "한 달 조금 안 됐네.",                       // 28
+      "이제 한 달도 안 남았어.",                    // 29
+      "이제 진짜 얼마 안 남았네.",                  // 30
+    ];
+
+    function getCountdownMessage(days) {
+      if (days <= 0) return MESSAGES[0];
+      if (days <= 30) return MESSAGES[days];
+      return "";
+    }
+
+    // =====================================================
+    // カウントダウン
+    // =====================================================
+    function daysLeft() {
+      const today  = new Date();
+      const d0     = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      const target = new Date(CONFIG.nextMeetDate + "T00:00:00");
+      return Math.max(0, Math.ceil((target - d0) / 86400000));
+    }
+
+    function formatDateShort(dateStr) {
+      return new Intl.DateTimeFormat("ko-KR", {
+        year: "numeric", month: "2-digit", day: "2-digit", weekday: "short"
+      }).format(new Date(dateStr + "T00:00:00"));
+    }
+
+    function updateCountdown() {
+      const n = daysLeft();
+      document.getElementById("namesText").textContent =
+        `${CONFIG.girlfriendName} ♡ ${CONFIG.boyfriendName}`;
+      document.getElementById("metaDate").textContent = formatDateShort(CONFIG.nextMeetDate);
+
+      const unitEl    = document.querySelector(".days-unit");
+      const todayMsgEl = document.getElementById("todayMsg");
+      if (n === 0) {
+        document.getElementById("daysNumber").textContent  = "오늘";
+        document.getElementById("sleepText").textContent   = "";
+        document.getElementById("loveMessage").textContent = "";
+        document.getElementById("dateChip").textContent    = "";
+        unitEl.style.display = "none";
+        todayMsgEl.style.display = "inline-block";
+        todayMsgEl.textContent   = "드디어 만나는 날이야 🎉";
+        launchFireworks();
+      } else {
+        document.getElementById("daysNumber").textContent  = n;
+        document.getElementById("sleepText").textContent   = `あと${n}回寝たら会えるね`;
+        document.getElementById("loveMessage").textContent = getCountdownMessage(n);
+        document.getElementById("dateChip").textContent    = `📅 ${formatDateShort(CONFIG.nextMeetDate)}`;
+        unitEl.style.display = "";
+        todayMsgEl.style.display = "none";
+      }
+    }
+
+    // =====================================================
+    // 写真スライドショー (IndexedDB + クロスフェード)
+    // =====================================================
+    const DB_NAME  = "coupleApp";
+    const DB_STORE = "photos";
+    let idb;
+
+    function openIDB() {
+      return new Promise((res, rej) => {
+        const r = indexedDB.open(DB_NAME, 1);
+        r.onupgradeneeded = e =>
+          e.target.result.createObjectStore(DB_STORE, { keyPath: "id", autoIncrement: true });
+        r.onsuccess = e => res(e.target.result);
+        r.onerror   = e => rej(e);
+      });
+    }
+
+    async function storePhotos(files) {
+      const tx    = idb.transaction(DB_STORE, "readwrite");
+      const store = tx.objectStore(DB_STORE);
+      store.clear();
+      for (const f of files) store.add({ blob: f });
+      return new Promise((res, rej) => { tx.oncomplete = res; tx.onerror = rej; });
+    }
+
+    async function loadPhotoBlobUrls() {
+      const tx  = idb.transaction(DB_STORE, "readonly");
+      const req = tx.objectStore(DB_STORE).getAll();
+      const records = await new Promise((res, rej) => {
+        req.onsuccess = e => res(e.target.result);
+        req.onerror   = rej;
+      });
+      return records.map(r => URL.createObjectURL(r.blob));
+    }
+
+    const imgA        = document.getElementById("photoA");
+    const imgB        = document.getElementById("photoB");
+    const placeholder = document.getElementById("photoPlaceholder");
+    let   activeSlot  = "A";
+    let   photoPool   = [];
+    let   photoIdx    = 0;
+    let   slideshowId = null;
+
+    function shuffle(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function showNextPhoto() {
+      if (!photoPool.length) return;
+      const url = photoPool[photoIdx % photoPool.length];
+      photoIdx++;
+      if (photoIdx >= photoPool.length) {
+        photoPool = shuffle(photoPool);
+        photoIdx  = 0;
+      }
+      if (activeSlot === "A") {
+        imgB.src = url; imgB.style.opacity = "1"; imgA.style.opacity = "0"; activeSlot = "B";
+      } else {
+        imgA.src = url; imgA.style.opacity = "1"; imgB.style.opacity = "0"; activeSlot = "A";
+      }
+    }
+
+    function startSlideshow(urls) {
+      if (!urls.length) return;
+      photoPool = shuffle(urls);
+      photoIdx  = 0;
+      placeholder.style.display = "none";
+      showNextPhoto();
+      if (slideshowId) clearInterval(slideshowId);
+      slideshowId = setInterval(showNextPhoto, 5000);
+    }
+
+    document.getElementById("photoUploadMulti").addEventListener("change", async e => {
+      const files = [...e.target.files];
+      if (!files.length) return;
+      await storePhotos(files);
+      startSlideshow(await loadPhotoBlobUrls());
+    });
+
+    placeholder.addEventListener("click", () => {
+      document.getElementById("photoUploadMulti").click();
+    });
+
+    async function initPhotos() {
+      idb = await openIDB();
+      const urls = await loadPhotoBlobUrls();
+      if (urls.length) startSlideshow(urls);
+    }
+    initPhotos();
+
+    // =====================================================
+    // 時刻
+    // =====================================================
+    function updateTimes() {
+      const now = new Date();
+      document.getElementById("koreaTime").textContent = new Intl.DateTimeFormat("ko-KR", {
+        timeZone: "Asia/Seoul",   hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false
+      }).format(now);
+      document.getElementById("thaiTime").textContent = new Intl.DateTimeFormat("ja-JP", {
+        timeZone: "Asia/Bangkok", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false
+      }).format(now);
+    }
+
+    // =====================================================
+    // 天気
+    // =====================================================
+    async function updateCountryInfo() {
+      try {
+        const [koW, thW] = await Promise.all([
+          fetchWeather(LOCATIONS.korea,    "ko"),
+          fetchWeather(LOCATIONS.thailand, "ja")
+        ]);
+        document.getElementById("koreaWeather").textContent = koW;
+        document.getElementById("thaiWeather").textContent  = thW;
+      } catch {
+        document.getElementById("koreaWeather").textContent = "--";
+        document.getElementById("thaiWeather").textContent  = "--";
+      }
+    }
+
+    // =====================================================
+    // 日付ピッカー
+    // =====================================================
+    const STORAGE_KEY   = "meetDate";
+    const meetDateInput = document.getElementById("meetDateInput");
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) CONFIG.nextMeetDate = saved;
+    meetDateInput.value = CONFIG.nextMeetDate;
+
+    meetDateInput.addEventListener("change", () => {
+      if (!meetDateInput.value) return;
+      CONFIG.nextMeetDate = meetDateInput.value;
+      localStorage.setItem(STORAGE_KEY, CONFIG.nextMeetDate);
+      updateCountdown();
+    });
+
+    // =====================================================
+    // 花火エフェクト (0日限定)
+    // =====================================================
+    function launchFireworks() {
+      const canvas = document.createElement("canvas");
+      canvas.style.cssText =
+        "position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999;";
+      document.body.appendChild(canvas);
+      const ctx = canvas.getContext("2d");
+
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const COLORS = [
+        "#e977a5","#c99dff","#ff8fb1","#ffb3d1",
+        "#f9c6e0","#d4a8ff","#ff6699","#ffcc00","#66ccff"
+      ];
+
+      const particles = [];
+
+      function spawnBurst(x, y) {
+        const color = COLORS[Math.floor(Math.random() * COLORS.length)];
+        for (let i = 0; i < 60; i++) {
+          const angle  = (Math.PI * 2 / 60) * i;
+          const speed  = 2 + Math.random() * 5;
+          particles.push({
+            x, y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            alpha: 1,
+            radius: 2 + Math.random() * 2,
+            color,
+            gravity: 0.08
+          });
+        }
+      }
+
+      const bursts = [
+        { x: 0.25, y: 0.25, delay: 0   },
+        { x: 0.75, y: 0.20, delay: 300 },
+        { x: 0.50, y: 0.15, delay: 600 },
+        { x: 0.15, y: 0.50, delay: 900 },
+        { x: 0.85, y: 0.45, delay: 1200},
+        { x: 0.40, y: 0.30, delay: 1500},
+        { x: 0.60, y: 0.25, delay: 1800},
+      ];
+
+      bursts.forEach(b => {
+        setTimeout(() => spawnBurst(
+          canvas.width  * b.x,
+          canvas.height * b.y
+        ), b.delay);
+      });
+
+      let frame;
+      function tick() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (let i = particles.length - 1; i >= 0; i--) {
+          const p = particles[i];
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += p.gravity;
+          p.vx *= 0.98;
+          p.alpha -= 0.014;
+          if (p.alpha <= 0) { particles.splice(i, 1); continue; }
+          ctx.globalAlpha = p.alpha;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.fillStyle = p.color;
+          ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+        if (particles.length > 0) {
+          frame = requestAnimationFrame(tick);
+        } else {
+          canvas.remove();
+        }
+      }
+      frame = requestAnimationFrame(tick);
+
+      setTimeout(() => {
+        cancelAnimationFrame(frame);
+        canvas.remove();
+      }, 5000);
+    }
+
+    // =====================================================
+    // バーコード装飾
+    // =====================================================
+    function generateBarcode() {
+      const bc = document.getElementById("barcode");
+      for (let i = 0; i < 48; i++) {
+        const bar = document.createElement("div");
+        bar.className = "bc-bar";
+        bar.style.width  = (Math.random() < 0.35 ? 3 : 1.5) + "px";
+        bar.style.height = (20 + Math.random() * 18) + "px";
+        bc.appendChild(bar);
+      }
+    }
+    generateBarcode();
+
+    // =====================================================
+    // 起動
+    // =====================================================
+    updateCountdown();
+    updateTimes();
+    updateCountryInfo();
+
+    setInterval(updateTimes,       1000);
+    setInterval(updateCountdown,  60000);
+    setInterval(updateCountryInfo, 30 * 60 * 1000);
+  </script>
+</body>
+</html>
