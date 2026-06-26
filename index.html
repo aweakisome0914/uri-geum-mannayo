@@ -668,7 +668,6 @@
       <p class="footer-note">오늘도 사랑해 · 보고 싶어 · 조금만 더 기다리자</p>
       <div class="firebase-status">
         <div class="fb-dot loading" id="fbDot"></div>
-        <span id="fbLabel">Firebase 接続中…</span>
       </div>
     </div>
 
@@ -1090,16 +1089,9 @@
     // Firebase 接続ステータス表示
     // =====================================================
     (function checkFirebase() {
-      const dot   = document.getElementById("fbDot");
-      const label = document.getElementById("fbLabel");
+      const dot = document.getElementById("fbDot");
       firebase.database().ref(".info/connected").on("value", snap => {
-        if (snap.val() === true) {
-          dot.className   = "fb-dot ok";
-          label.textContent = "Firebase 接続済み ✓";
-        } else {
-          dot.className   = "fb-dot error";
-          label.textContent = "Firebase 未接続";
-        }
+        dot.className = snap.val() === true ? "fb-dot ok" : "fb-dot error";
       });
     })();
 
