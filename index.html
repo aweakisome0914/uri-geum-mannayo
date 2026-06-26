@@ -883,14 +883,27 @@
     // 日付ピッカー (Firebase Realtime Database でリアルタイム同期)
     // =====================================================
     const meetDateInput = document.getElementById("meetDateInput");
-    meetDateInput.value = CONFIG.nextMeetDate;
 
-    // DB の値をリアルタイム監視（他デバイスで変更したら即反映）
+    // 前回キャッシュがあれば即座に表示（Firebaseより先）
+    const cachedDate = localStorage.getItem("meetDate");
+    if (cachedDate) {
+      CONFIG.nextMeetDate = cachedDate;
+      meetDateInput.value = cachedDate;
+      updateCountdown();
+    }
+
+    // Firebase からリアルタイム同期（キャッシュと異なれば更新）
     db.ref("meetDate").on("value", snapshot => {
       const date = snapshot.val();
-      if (date) {
-        CONFIG.nextMeetDate  = date;
-        meetDateInput.value  = date;
+      if (date && date !== CONFIG.nextMeetDate) {
+        CONFIG.nextMeetDate = date;
+        meetDateInput.value = date;
+        localStorage.setItem("meetDate", date);
+        updateCountdown();
+      } else if (date && !cachedDate) {
+        CONFIG.nextMeetDate = date;
+        meetDateInput.value = date;
+        localStorage.setItem("meetDate", date);
         updateCountdown();
       }
     });
