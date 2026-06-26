@@ -594,7 +594,7 @@
       </div>
 
       <!-- Countdown -->
-      <div class="countdown-block">
+      <div class="countdown-block" id="countdownBlock" style="opacity:0;transition:opacity 0.4s">
         <div class="days-display">
           <span class="days-num" id="daysNumber">--</span>
           <span class="days-unit">일</span>
@@ -883,28 +883,19 @@
     // 日付ピッカー (Firebase Realtime Database でリアルタイム同期)
     // =====================================================
     const meetDateInput = document.getElementById("meetDateInput");
+    const countdownBlock = document.getElementById("countdownBlock");
 
-    // 前回キャッシュがあれば即座に表示（Firebaseより先）
-    const cachedDate = localStorage.getItem("meetDate");
-    if (cachedDate) {
-      CONFIG.nextMeetDate = cachedDate;
-      meetDateInput.value = cachedDate;
-      updateCountdown();
-    }
+    // 古い localStorage キャッシュを削除
+    localStorage.removeItem("meetDate");
 
-    // Firebase からリアルタイム同期（キャッシュと異なれば更新）
+    // Firebase が正しい日付を返してから表示
     db.ref("meetDate").on("value", snapshot => {
       const date = snapshot.val();
-      if (date && date !== CONFIG.nextMeetDate) {
+      if (date) {
         CONFIG.nextMeetDate = date;
         meetDateInput.value = date;
-        localStorage.setItem("meetDate", date);
         updateCountdown();
-      } else if (date && !cachedDate) {
-        CONFIG.nextMeetDate = date;
-        meetDateInput.value = date;
-        localStorage.setItem("meetDate", date);
-        updateCountdown();
+        countdownBlock.style.opacity = "1";
       }
     });
 
