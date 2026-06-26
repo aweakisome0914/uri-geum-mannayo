@@ -161,27 +161,6 @@
       font-size: 12px;
     }
 
-    .add-photo-btn {
-      position: absolute;
-      bottom: 10px;
-      right: 10px;
-      z-index: 10;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.9);
-      color: var(--pink);
-      font-size: 20px;
-      line-height: 34px;
-      text-align: center;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(233,119,165,0.3);
-      opacity: 0;
-      transition: opacity 0.2s;
-      user-select: none;
-    }
-
-    .ticket-photo:hover .add-photo-btn { opacity: 1; }
 
     /* ═══════════════════════════
        ROUTE SECTION
@@ -576,8 +555,6 @@
         <p>写真をタップして追加</p>
         <small>複数まとめて選択できます</small>
       </div>
-      <label class="add-photo-btn" for="photoUploadMulti" title="写真を追加">＋</label>
-      <input type="file" id="photoUploadMulti" accept="image/*" multiple style="display:none" />
     </div>
 
     <!-- ── Body ── -->
@@ -676,7 +653,6 @@
   <!-- Firebase SDK (compat) -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
 
   <script>
     // =====================================================
@@ -692,8 +668,7 @@
       appId:             "1:427338561458:web:1ddd1db31cdfcfd2fe96ab"
     };
     firebase.initializeApp(firebaseConfig);
-    const db      = firebase.database();
-    const storage = firebase.storage();
+    const db = firebase.database();
 
     // =====================================================
     // 設定値
@@ -827,52 +802,7 @@
     // 写真 (Firebase Storage + Realtime Database)
     // =====================================================
 
-    // Canvas でリサイズ＆JPEG圧縮（アップロード高速化）
-    function compressImage(file, maxWidth = 1280, quality = 0.82) {
-      return new Promise(resolve => {
-        const img = new Image();
-        const blobUrl = URL.createObjectURL(file);
-        img.onload = () => {
-          const scale  = Math.min(1, maxWidth / img.width);
-          const canvas = document.createElement("canvas");
-          canvas.width  = Math.round(img.width  * scale);
-          canvas.height = Math.round(img.height * scale);
-          canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
-          URL.revokeObjectURL(blobUrl);
-          canvas.toBlob(resolve, "image/jpeg", quality);
-        };
-        img.src = blobUrl;
-      });
-    }
-
-    async function storePhotos(files) {
-      const total = files.length;
-      const setProgress = n =>
-        (placeholder.textContent = `アップロード中… ${n}/${total}`);
-
-      setProgress(0);
-
-      // 圧縮と既存削除を並行実行
-      const [compressed] = await Promise.all([
-        Promise.all([...files].map(f => compressImage(f))),
-        storage.ref("photos").listAll()
-          .then(list => Promise.all(list.items.map(i => i.delete())))
-          .catch(() => {})
-      ]);
-
-      // 圧縮済みを順次アップロード
-      const urls = {};
-      await Promise.all(compressed.map(async (blob, i) => {
-        const ref = storage.ref(`photos/${Date.now()}_${i}`);
-        await ref.put(blob, { contentType: "image/jpeg" });
-        urls[`p${i}`] = await ref.getDownloadURL();
-        setProgress(i + 1);
-      }));
-
-      await db.ref("photos").set(urls);
-    }
-
-    // 写真 URL をリアルタイム監視（他デバイスでアップすると自動反映）
+    // 写真 URL をリアルタイム監視
     db.ref("photos").on("value", snapshot => {
       if (!snapshot.exists()) return;
       const urls = Object.values(snapshot.val()).filter(Boolean);
@@ -921,17 +851,6 @@
       slideshowId = setInterval(showNextPhoto, 5000);
     }
 
-    document.getElementById("photoUploadMulti").addEventListener("change", async e => {
-      const files = [...e.target.files];
-      if (!files.length) return;
-      placeholder.textContent = "アップロード中…";
-      await storePhotos(files);
-      placeholder.innerHTML = "";
-    });
-
-    placeholder.addEventListener("click", () => {
-      document.getElementById("photoUploadMulti").click();
-    });
 
     // =====================================================
     // 時刻
