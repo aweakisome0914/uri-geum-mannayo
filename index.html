@@ -795,21 +795,49 @@
     // =====================================================
     // 写真 (Firebase Storage + Realtime Database)
     // =====================================================
-    async function storePhotos(files) {
-      // 既存写真を全削除
-      try {
-        const list = await storage.ref("photos").listAll();
-        await Promise.all(list.items.map(item => item.delete()));
-      } catch (_) {}
 
-      // 新しい写真をアップロードして URL を DB に保存
+    // Canvas でリサイズ＆JPEG圧縮（アップロード高速化）
+    function compressImage(file, maxWidth = 1280, quality = 0.82) {
+      return new Promise(resolve => {
+        const img = new Image();
+        const blobUrl = URL.createObjectURL(file);
+        img.onload = () => {
+          const scale  = Math.min(1, maxWidth / img.width);
+          const canvas = document.createElement("canvas");
+          canvas.width  = Math.round(img.width  * scale);
+          canvas.height = Math.round(img.height * scale);
+          canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+          URL.revokeObjectURL(blobUrl);
+          canvas.toBlob(resolve, "image/jpeg", quality);
+        };
+        img.src = blobUrl;
+      });
+    }
+
+    async function storePhotos(files) {
+      const total = files.length;
+      const setProgress = n =>
+        (placeholder.textContent = `アップロード中… ${n}/${total}`);
+
+      setProgress(0);
+
+      // 圧縮と既存削除を並行実行
+      const [compressed] = await Promise.all([
+        Promise.all([...files].map(f => compressImage(f))),
+        storage.ref("photos").listAll()
+          .then(list => Promise.all(list.items.map(i => i.delete())))
+          .catch(() => {})
+      ]);
+
+      // 圧縮済みを順次アップロード
       const urls = {};
-      await Promise.all([...files].map(async (file, i) => {
+      await Promise.all(compressed.map(async (blob, i) => {
         const ref = storage.ref(`photos/${Date.now()}_${i}`);
-        await ref.put(file);
-        const url = await ref.getDownloadURL();
-        urls[`p${i}`] = url;
+        await ref.put(blob, { contentType: "image/jpeg" });
+        urls[`p${i}`] = await ref.getDownloadURL();
+        setProgress(i + 1);
       }));
+
       await db.ref("photos").set(urls);
     }
 
