@@ -510,6 +510,34 @@
       letter-spacing: 0.06em;
     }
 
+    .firebase-status {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      margin-top: 10px;
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .fb-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #ccc;
+      flex-shrink: 0;
+      transition: background 0.4s;
+    }
+
+    .fb-dot.ok      { background: #4caf50; }
+    .fb-dot.error   { background: #e57373; }
+    .fb-dot.loading { background: #ffb74d; animation: pulse 1s infinite; }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.3; }
+    }
+
     /* ═══════════════════════════
        KEYFRAMES
     ═══════════════════════════ */
@@ -638,6 +666,10 @@
       <div class="barcode-wrap" id="barcode"></div>
 
       <p class="footer-note">오늘도 사랑해 · 보고 싶어 · 조금만 더 기다리자</p>
+      <div class="firebase-status">
+        <div class="fb-dot loading" id="fbDot"></div>
+        <span id="fbLabel">Firebase 接続中…</span>
+      </div>
     </div>
 
   </div><!-- /ticket -->
@@ -1053,6 +1085,23 @@
       }
     }
     generateBarcode();
+
+    // =====================================================
+    // Firebase 接続ステータス表示
+    // =====================================================
+    (function checkFirebase() {
+      const dot   = document.getElementById("fbDot");
+      const label = document.getElementById("fbLabel");
+      firebase.database().ref(".info/connected").on("value", snap => {
+        if (snap.val() === true) {
+          dot.className   = "fb-dot ok";
+          label.textContent = "Firebase 接続済み ✓";
+        } else {
+          dot.className   = "fb-dot error";
+          label.textContent = "Firebase 未接続";
+        }
+      });
+    })();
 
     // =====================================================
     // 起動
