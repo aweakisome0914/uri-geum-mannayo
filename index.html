@@ -642,7 +642,28 @@
 
   </div><!-- /ticket -->
 
+  <!-- Firebase SDK (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+
   <script>
+    // =====================================================
+    // Firebase 初期化
+    // =====================================================
+    const firebaseConfig = {
+      apiKey:            "AIzaSyB_KsLcdRmGUwoqluGLhXM0jQEQJ0gJBCc",
+      authDomain:        "love-countdown-dd3fb.firebaseapp.com",
+      databaseURL:       "https://love-countdown-dd3fb-default-rtdb.firebaseio.com",
+      projectId:         "love-countdown-dd3fb",
+      storageBucket:     "love-countdown-dd3fb.firebasestorage.app",
+      messagingSenderId: "427338561458",
+      appId:             "1:427338561458:web:1ddd1db31cdfcfd2fe96ab"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db      = firebase.database();
+    const storage = firebase.storage();
+
     // =====================================================
     // 設定値
     // =====================================================
@@ -772,39 +793,32 @@
     }
 
     // =====================================================
-    // 写真スライドショー (IndexedDB + クロスフェード)
+    // 写真 (Firebase Storage + Realtime Database)
     // =====================================================
-    const DB_NAME  = "coupleApp";
-    const DB_STORE = "photos";
-    let idb;
-
-    function openIDB() {
-      return new Promise((res, rej) => {
-        const r = indexedDB.open(DB_NAME, 1);
-        r.onupgradeneeded = e =>
-          e.target.result.createObjectStore(DB_STORE, { keyPath: "id", autoIncrement: true });
-        r.onsuccess = e => res(e.target.result);
-        r.onerror   = e => rej(e);
-      });
-    }
-
     async function storePhotos(files) {
-      const tx    = idb.transaction(DB_STORE, "readwrite");
-      const store = tx.objectStore(DB_STORE);
-      store.clear();
-      for (const f of files) store.add({ blob: f });
-      return new Promise((res, rej) => { tx.oncomplete = res; tx.onerror = rej; });
+      // 既存写真を全削除
+      try {
+        const list = await storage.ref("photos").listAll();
+        await Promise.all(list.items.map(item => item.delete()));
+      } catch (_) {}
+
+      // 新しい写真をアップロードして URL を DB に保存
+      const urls = {};
+      await Promise.all([...files].map(async (file, i) => {
+        const ref = storage.ref(`photos/${Date.now()}_${i}`);
+        await ref.put(file);
+        const url = await ref.getDownloadURL();
+        urls[`p${i}`] = url;
+      }));
+      await db.ref("photos").set(urls);
     }
 
-    async function loadPhotoBlobUrls() {
-      const tx  = idb.transaction(DB_STORE, "readonly");
-      const req = tx.objectStore(DB_STORE).getAll();
-      const records = await new Promise((res, rej) => {
-        req.onsuccess = e => res(e.target.result);
-        req.onerror   = rej;
-      });
-      return records.map(r => URL.createObjectURL(r.blob));
-    }
+    // 写真 URL をリアルタイム監視（他デバイスでアップすると自動反映）
+    db.ref("photos").on("value", snapshot => {
+      if (!snapshot.exists()) return;
+      const urls = Object.values(snapshot.val()).filter(Boolean);
+      if (urls.length) startSlideshow(urls);
+    });
 
     const imgA        = document.getElementById("photoA");
     const imgB        = document.getElementById("photoB");
@@ -851,20 +865,14 @@
     document.getElementById("photoUploadMulti").addEventListener("change", async e => {
       const files = [...e.target.files];
       if (!files.length) return;
+      placeholder.textContent = "アップロード中…";
       await storePhotos(files);
-      startSlideshow(await loadPhotoBlobUrls());
+      placeholder.innerHTML = "";
     });
 
     placeholder.addEventListener("click", () => {
       document.getElementById("photoUploadMulti").click();
     });
-
-    async function initPhotos() {
-      idb = await openIDB();
-      const urls = await loadPhotoBlobUrls();
-      if (urls.length) startSlideshow(urls);
-    }
-    initPhotos();
 
     // =====================================================
     // 時刻
@@ -897,19 +905,24 @@
     }
 
     // =====================================================
-    // 日付ピッカー
+    // 日付ピッカー (Firebase Realtime Database でリアルタイム同期)
     // =====================================================
-    const STORAGE_KEY   = "meetDate";
     const meetDateInput = document.getElementById("meetDateInput");
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) CONFIG.nextMeetDate = saved;
     meetDateInput.value = CONFIG.nextMeetDate;
+
+    // DB の値をリアルタイム監視（他デバイスで変更したら即反映）
+    db.ref("meetDate").on("value", snapshot => {
+      const date = snapshot.val();
+      if (date) {
+        CONFIG.nextMeetDate  = date;
+        meetDateInput.value  = date;
+        updateCountdown();
+      }
+    });
 
     meetDateInput.addEventListener("change", () => {
       if (!meetDateInput.value) return;
-      CONFIG.nextMeetDate = meetDateInput.value;
-      localStorage.setItem(STORAGE_KEY, CONFIG.nextMeetDate);
-      updateCountdown();
+      db.ref("meetDate").set(meetDateInput.value);
     });
 
     // =====================================================
