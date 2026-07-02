@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&display=swap');
+
+:root {
+  --ivory: #FAFAF5;
+  --ink: #1A1A1A;
+  --muted: #888888;
+}
+
+html, body {
+  height: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Mood themes — applied on gift page */
+[data-mood="gentle"] {
+  --mood-bg: #FAFAF5;
+  --mood-text: #1A1A1A;
+  --mood-muted: #888888;
+  --mood-accent: #C8A5B5;
+  --mood-card: rgba(255, 255, 255, 0.72);
+  --mood-btn: #1A1A1A;
+  --mood-btn-text: #FFFFFF;
+}
+
+[data-mood="romantic"] {
+  --mood-bg: #1C1018;
+  --mood-text: #F5EFE8;
+  --mood-muted: #A08890;
+  --mood-accent: #C8956A;
+  --mood-card: rgba(255, 255, 255, 0.06);
+  --mood-btn: #C8956A;
+  --mood-btn-text: #1C1018;
+}
+
+[data-mood="warm"] {
+  --mood-bg: #FAF0E8;
+  --mood-text: #2A1A0A;
+  --mood-muted: #907060;
+  --mood-accent: #C87058;
+  --mood-card: rgba(255, 255, 255, 0.65);
+  --mood-btn: #C87058;
+  --mood-btn-text: #FFFFFF;
+}
+
+/* Smooth scroll */
+* {
+  scroll-behavior: smooth;
+}
+
+/* Tap highlight off */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Number display — elegant proportional figures */
+.num-display {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-variant-numeric: proportional-nums;
+}

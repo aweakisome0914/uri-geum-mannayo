@@ -1,0 +1,25 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /pages/{pageId} {
+
+      // 受け取り側は未ログインでも閲覧できる（URLが秘密鍵代わり）
+      allow read: if true;
+
+      // 匿名ログイン済みユーザーのみ作成可
+      // ownerUid が認証UIDと一致・画像1枚以内・メッセージ1000文字以内を検証
+      allow create: if request.auth != null
+        && request.resource.data.ownerUid       == request.auth.uid
+        && request.resource.data.imageCount     <= 1
+        && request.resource.data.message        is string
+        && request.resource.data.message.size() <= 1000
+        && request.resource.data.secretCodeHash is string
+        && request.resource.data.secretCodeHash.size() > 0
+        && request.resource.data.createdAt      != null;
+
+      // 届けたら変えない
+      allow update, delete: if false;
+    }
+  }
+}

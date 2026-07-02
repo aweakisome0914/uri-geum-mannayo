@@ -1,0 +1,20 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /memories/{uid}/{pageId}/{fileName} {
+
+      // gift page から直接 URL で表示するため read は全員許可
+      allow read: if true;
+
+      // 本人のみ・新規作成のみ・画像形式のみ・5MB以下
+      allow create: if request.auth != null
+        && request.auth.uid == uid
+        && request.resource.contentType.matches('image/(jpeg|png|webp)')
+        && request.resource.size <= 5 * 1024 * 1024;
+
+      // 上書き・削除は禁止
+      allow update, delete: if false;
+    }
+  }
+}

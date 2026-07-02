@@ -1,1080 +1,1487 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>우리 곧 만나요 | Love Ticket</title>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>Love Page ♡</title>
   <style>
+    /* ================================================================
+       CSS Variables
+    ================================================================ */
     :root {
-      --pink:    #e977a5;
-      --lav:     #c99dff;
-      --text:    #2d1f2a;
-      --muted:   #9c7d8e;
-      --bg:      #f3dcea;
-      --white:   #ffffff;
+      --ivory:       #faf8f3;
+      --pink-light:  #fde8f0;
+      --pink:        #f4a6b2;
+      --pink-deep:   #e0789a;
+      --lavender:    #ede8f8;
+      --text:        #2a2a2a;
+      --text-sub:    #888;
+      --r-card:      22px;
+      --r-pill:      50px;
+      --shadow:      0 8px 32px rgba(0,0,0,0.08);
+      --shadow-s:    0 4px 16px rgba(0,0,0,0.06);
+      --font:        -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Hiragino Sans', 'Noto Sans JP', sans-serif;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after {
+      margin: 0; padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
 
+    html { height: 100%; }
     body {
-      min-height: 100vh;
-      background: var(--bg);
-      background-image:
-        radial-gradient(ellipse at top left,    rgba(255,210,235,0.9) 0%, transparent 55%),
-        radial-gradient(ellipse at bottom right, rgba(220,200,255,0.8) 0%, transparent 50%);
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      padding: 28px 16px 56px;
-      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue",
-        "Hiragino Sans", "Noto Sans KR", "Noto Sans JP", Arial, sans-serif;
-      color: var(--text);
-    }
-
-    /* ═══════════════════════════
-       TICKET SHELL
-    ═══════════════════════════ */
-    .ticket {
-      width: 100%;
-      max-width: 390px;
-      background: var(--white);
-      border-radius: 26px;
-      box-shadow:
-        0 1px 0 rgba(233,119,165,0.18),
-        0 10px 40px rgba(180,100,150,0.22),
-        0 40px 80px rgba(180,100,150,0.1);
-      position: relative;
-    }
-
-    /* ═══════════════════════════
-       HEADER
-    ═══════════════════════════ */
-    .ticket-header {
-      background: linear-gradient(120deg, #e977a5 0%, #c99dff 100%);
-      border-radius: 26px 26px 0 0;
-      padding: 18px 22px 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      color: white;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .ticket-header::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: repeating-linear-gradient(
-        -55deg,
-        rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px,
-        transparent 1px, transparent 18px
-      );
-    }
-
-    .th-left .th-eyebrow {
-      font-size: 9px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      opacity: 0.7;
-      font-weight: 700;
-    }
-
-    .th-left .th-title {
-      font-size: 20px;
-      font-weight: 900;
-      letter-spacing: -0.02em;
-      margin-top: 2px;
-    }
-
-    .th-badge {
-      background: rgba(255,255,255,0.22);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(255,255,255,0.3);
-      border-radius: 999px;
-      padding: 6px 14px;
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 0.1em;
-      position: relative;
-    }
-
-    /* ═══════════════════════════
-       PHOTO
-    ═══════════════════════════ */
-    .ticket-photo {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 3 / 2;
-      overflow: hidden;
-      background:
-        linear-gradient(135deg, rgba(255,232,241,0.92), rgba(245,236,255,0.92)),
-        repeating-linear-gradient(-45deg,
-          rgba(255,255,255,0.3), rgba(255,255,255,0.3) 5px,
-          rgba(255,255,255,0.1) 5px, rgba(255,255,255,0.1) 10px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-    }
-
-    .ticket-photo img {
-      position: absolute;
-      inset: 0;
-      width: 100%;
       height: 100%;
-      object-fit: cover;
-      object-position: center top;
+      font-family: var(--font);
+      color: var(--text);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ================================================================
+       Animated Background
+    ================================================================ */
+    #bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: linear-gradient(135deg, #faf8f3 0%, #fde8f0 30%, #ede8f8 60%, #f5f0e8 100%);
+      background-size: 400% 400%;
+      animation: bgMove 18s ease infinite;
+    }
+    @keyframes bgMove {
+      0%   { background-position: 0%   50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0%   50%; }
+    }
+
+    /* ================================================================
+       Floating decorative icons — password screen
+    ================================================================ */
+    #bg-decor {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+    .decor-item {
+      position: absolute;
       opacity: 0;
-      transition: opacity 1s ease;
-      image-rendering: -webkit-optimize-contrast;
-      image-rendering: high-quality;
-      -webkit-backface-visibility: hidden;
-      backface-visibility: hidden;
-      will-change: opacity;
+      animation: floatDecor linear infinite;
+      will-change: transform, opacity;
+    }
+    @keyframes floatDecor {
+      0%   { transform: translateY(110vh) rotate(0deg);    opacity: 0;    }
+      8%   {                                                opacity: 0.07; }
+      88%  {                                                opacity: 0.07; }
+      100% { transform: translateY(-120px) rotate(360deg); opacity: 0;    }
     }
 
-    .photo-placeholder {
-      position: relative;
+    /* ================================================================
+       Floating Hearts — main screen
+    ================================================================ */
+    #hearts-wrap {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
       z-index: 2;
-      text-align: center;
-      padding: 20px;
-      color: var(--muted);
+      overflow: hidden;
+    }
+    .fheart {
+      position: absolute;
+      opacity: 0;
+      animation: floatHeart linear forwards;
+      will-change: transform, opacity;
+    }
+    @keyframes floatHeart {
+      0%   { opacity: 0;    transform: translateY(0)      translateX(0)           scale(0.5); }
+      10%  { opacity: 0.35; }
+      85%  { opacity: 0.25; }
+      100% { opacity: 0;    transform: translateY(-85vh)  translateX(var(--dx))   scale(1.1); }
     }
 
-    .ph-icon {
-      font-size: 34px;
-      display: block;
-      margin-bottom: 8px;
-      animation: heartbeat 1.8s infinite;
+    /* ================================================================
+       Language Switcher
+    ================================================================ */
+    #lang-bar {
+      position: fixed;
+      top: calc(env(safe-area-inset-top, 0px) + 14px);
+      right: 14px;
+      z-index: 500;
+      display: flex;
+      gap: 3px;
+      background: rgba(255,255,255,0.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,0.9);
+      border-radius: 50px;
+      padding: 4px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
     }
-
-    .photo-placeholder p {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 3px;
-    }
-
-    .photo-placeholder small {
-      font-size: 12px;
-    }
-
-
-    /* ═══════════════════════════
-       ROUTE SECTION
-    ═══════════════════════════ */
-    .ticket-body {
-      padding: 20px 22px 16px;
-    }
-
-    .route-row {
-      display: grid;
-      grid-template-columns: 1fr auto 1fr;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 14px;
-    }
-
-    .airport { line-height: 1.15; }
-    .airport:last-child { text-align: right; }
-
-    .airport-code {
-      font-size: 38px;
-      font-weight: 900;
-      letter-spacing: -0.05em;
-      color: var(--text);
-      line-height: 1;
-    }
-
-    .airport-city {
+    .lang-btn {
+      padding: 5px 11px;
+      border: none;
+      border-radius: 50px;
+      background: transparent;
       font-size: 11px;
-      color: var(--muted);
-      font-weight: 600;
-      margin-top: 3px;
+      font-weight: 700;
+      color: var(--text-sub);
+      cursor: pointer;
+      font-family: var(--font);
+      transition: all 0.22s ease;
+      letter-spacing: 0.3px;
+    }
+    .lang-btn.on {
+      background: linear-gradient(135deg, #f4a6b2, #c8a0d8);
+      color: white;
+    }
+    .lang-btn:active { transform: scale(0.94); }
+
+    /* ================================================================
+       Screen System
+    ================================================================ */
+    .screen {
+      position: relative;
+      z-index: 10;
+      min-height: 100vh;
+      min-height: -webkit-fill-available;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.55s ease;
+    }
+    .screen.on  { display: flex; flex-direction: column; }
+    .screen.vis { opacity: 1; }
+
+    /* ================================================================
+       PASSWORD SCREEN
+    ================================================================ */
+    #s-pw {
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px;
+      padding-top:    max(env(safe-area-inset-top,    40px), 60px);
+      padding-bottom: max(env(safe-area-inset-bottom, 24px), 40px);
     }
 
-    .flight-mid {
+    .pw-wrap {
+      width: 100%;
+      max-width: 360px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 2px;
+      gap: 36px;
     }
 
-    .flight-track {
-      position: relative;
-      width: 88px;
-      height: 30px;
-    }
-
-    .plane-anim {
-      position: absolute;
-      font-size: 20px;
-      top: 0;
-      left: 0;
-      animation: fly 3.8s ease-in-out infinite;
-      filter: drop-shadow(0 2px 6px rgba(233,119,165,0.4));
-    }
-
-    @keyframes fly {
-      0%   { left: 0%;  transform: translateX(0)    rotate(5deg); }
-      50%  { left: 72%; transform: translateX(-50%) rotate(1deg); }
-      100% { left: 0%;  transform: translateX(0)    rotate(5deg); }
-    }
-
-    .flight-dash {
-      width: 88px;
-      border-top: 2px dashed rgba(233,119,165,0.35);
-      margin-top: 8px;
-    }
-
-    .round-trip {
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      color: var(--muted);
-      text-transform: uppercase;
-      margin-top: 4px;
-    }
-
-    /* ═══════════════════════════
-       META BAR
-    ═══════════════════════════ */
-    .meta-bar {
-      display: grid;
-      grid-template-columns: 1fr 1px 1fr 1px 1fr;
-      align-items: center;
-      border-top: 1px solid rgba(233,119,165,0.14);
-      border-bottom: 1px solid rgba(233,119,165,0.14);
-      padding: 10px 0;
-      margin-bottom: 18px;
-      gap: 0;
-    }
-
-    .meta-divider {
-      height: 28px;
-      width: 1px;
-      background: rgba(233,119,165,0.18);
-    }
-
-    .meta-cell {
-      text-align: center;
-      padding: 0 8px;
-    }
-
-    .meta-label {
-      font-size: 8.5px;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--muted);
-      font-weight: 700;
-      margin-bottom: 3px;
-    }
-
-    .meta-val {
-      font-size: 12px;
-      font-weight: 900;
-      color: var(--text);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    /* ═══════════════════════════
-       COUNTDOWN
-    ═══════════════════════════ */
-    .countdown-block {
-      text-align: center;
-      padding: 4px 0 8px;
-    }
-
-    .days-display {
+    .lock-box {
       display: flex;
-      align-items: baseline;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      position: relative;
+    }
+
+    .lock-ring {
+      width: 88px;
+      height: 88px;
+      border-radius: 26px;
+      background: linear-gradient(145deg, #fde8f0, #ede8f8);
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
       justify-content: center;
-      gap: 6px;
-      line-height: 1;
-    }
-
-    .days-num {
-      font-size: 76px;
-      font-weight: 900;
-      letter-spacing: -0.08em;
-      color: var(--pink);
-      line-height: 1;
-    }
-
-    .days-unit {
-      font-size: 26px;
-      font-weight: 700;
-      color: var(--text);
-      letter-spacing: -0.02em;
-    }
-
-    .sleep-text {
-      font-size: 14px;
-      font-weight: 800;
-      color: var(--text);
-      margin-top: 8px;
-    }
-
-    .today-msg {
-      display: none;
-      margin-top: 14px;
-      padding: 12px 20px;
-      background: linear-gradient(120deg, rgba(233,119,165,0.12), rgba(201,157,255,0.12));
-      border: 1.5px solid rgba(233,119,165,0.25);
-      border-radius: 999px;
-      font-size: 15px;
-      font-weight: 800;
-      color: var(--pink);
-      letter-spacing: -0.01em;
-      animation: pop-in 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
-    }
-
-    @keyframes pop-in {
-      from { transform: scale(0.7); opacity: 0; }
-      to   { transform: scale(1);   opacity: 1; }
-    }
-
-    .love-msg {
-      font-size: 13px;
-      color: var(--muted);
-      margin-top: 6px;
-      line-height: 1.55;
-    }
-
-    .date-chip {
-      display: inline-block;
-      margin-top: 10px;
-      padding: 6px 14px;
-      border-radius: 999px;
-      background: rgba(233,119,165,0.08);
-      color: #c05882;
-      font-size: 12px;
-      font-weight: 800;
-    }
-
-    /* ═══════════════════════════
-       TEAR LINE
-    ═══════════════════════════ */
-    .tear-line {
-      display: flex;
-      align-items: center;
-      margin: 6px 0;
-    }
-
-    .tear-notch {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: var(--bg);
-      flex-shrink: 0;
-      margin: 0 -1px;
-    }
-
-    .tear-dashes {
-      flex: 1;
-      border-top: 2px dashed rgba(233,119,165,0.32);
-    }
-
-    .tear-scissors {
-      font-size: 14px;
-      padding: 0 6px;
-      color: rgba(233,119,165,0.5);
-      flex-shrink: 0;
       position: relative;
-      top: -1px;
+      transition: background 0.5s ease;
+    }
+    .lock-ring.open {
+      background: linear-gradient(145deg, #d4f5e4, #c8edd8);
+      animation: lockPop 0.5s ease;
+    }
+    @keyframes lockPop {
+      0%   { transform: scale(1); }
+      35%  { transform: scale(1.18) rotate(-8deg); }
+      65%  { transform: scale(0.92)  rotate(4deg); }
+      100% { transform: scale(1); }
     }
 
-    /* ═══════════════════════════
-       STUB
-    ═══════════════════════════ */
-    .ticket-stub {
-      padding: 14px 22px 22px;
-    }
-
-    .time-weather-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-
-    .tw-chip {
-      background: #fdf4f9;
-      border: 1px solid rgba(233,119,165,0.15);
-      border-radius: 16px;
-      padding: 10px 12px;
-    }
-
-    .tw-flag {
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 4px;
-    }
-
-    .tw-time {
-      font-size: 20px;
-      font-weight: 900;
-      letter-spacing: -0.03em;
-      color: var(--text);
-      line-height: 1;
-      margin-bottom: 3px;
-    }
-
-    .tw-weather {
-      font-size: 11px;
-      color: var(--muted);
-      font-weight: 600;
-    }
-
-    /* date picker */
-    .date-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: #fdf4f9;
-      border: 1px solid rgba(233,119,165,0.18);
-      border-radius: 16px;
-      padding: 10px 14px;
-      margin-bottom: 14px;
-    }
-
-    .date-row-label {
-      font-size: 11px;
-      font-weight: 800;
-      color: var(--muted);
+    .lock-svg {
+      width: 38px; height: 38px;
+      color: var(--pink-deep);
+      transition: color 0.4s ease;
       flex-shrink: 0;
-      white-space: nowrap;
+    }
+    .lock-ring.open .lock-svg { color: #4baf7a; }
+
+    /* Particle burst */
+    .particles {
+      position: absolute;
+      top: 0; left: 0;
+      width: 88px; height: 88px;
+      pointer-events: none;
+    }
+    .p-dot {
+      position: absolute;
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      top: 50%; left: 50%;
+      opacity: 0;
+      transform: translate(-50%, -50%);
+    }
+    .p-dot.burst {
+      animation: pBurst 0.7s ease forwards;
+    }
+    @keyframes pBurst {
+      0%   { opacity: 1; transform: translate(-50%,-50%) translate(0,0)          scale(1); }
+      100% { opacity: 0; transform: translate(-50%,-50%) translate(var(--tx),var(--ty)) scale(0); }
     }
 
-    .date-row input[type="date"] {
-      flex: 1;
-      border: none;
-      background: transparent;
-      font-size: 14px;
+    .pw-titles { text-align: center; }
+    .pw-title {
+      font-size: 30px;
       font-weight: 800;
+      letter-spacing: -0.5px;
+      font-style: italic;
+      margin-bottom: 8px;
+    }
+    .pw-sub {
+      font-size: 13px;
+      color: var(--text-sub);
+      line-height: 1.65;
+    }
+
+    .pw-card {
+      width: 100%;
+      background: rgba(255,255,255,0.72);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255,255,255,0.9);
+      border-radius: var(--r-card);
+      padding: 32px 26px 28px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .pw-input {
+      width: 100%;
+      padding: 16px 22px;
+      border: 1.5px solid rgba(244,166,178,0.35);
+      border-radius: 16px;
+      background: rgba(255,255,255,0.85);
+      font-size: 22px;
+      letter-spacing: 10px;
+      text-align: center;
       color: var(--text);
       outline: none;
-      cursor: pointer;
-      min-width: 0;
+      font-family: var(--font);
+      transition: border-color 0.25s, box-shadow 0.25s;
+      -webkit-appearance: none;
+    }
+    .pw-input:focus {
+      border-color: var(--pink);
+      background: white;
+      box-shadow: 0 0 0 4px rgba(244,166,178,0.14);
+    }
+    .pw-input.err {
+      border-color: #e47777;
+      animation: shake 0.38s ease;
+    }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20%     { transform: translateX(-9px); }
+      40%     { transform: translateX(9px); }
+      60%     { transform: translateX(-6px); }
+      80%     { transform: translateX(6px); }
     }
 
-    /* barcode */
-    .barcode-wrap {
-      display: flex;
-      align-items: flex-end;
-      gap: 2.5px;
-      height: 40px;
-      padding: 0 4px;
-      opacity: 0.15;
-    }
-
-    .bc-bar {
-      background: var(--text);
-      border-radius: 1px;
-      flex-shrink: 0;
-    }
-
-    .footer-note {
+    .err-msg {
+      font-size: 13px;
+      color: #cc5566;
       text-align: center;
-      font-size: 11px;
-      color: rgba(160,110,140,0.65);
-      margin-top: 14px;
-      letter-spacing: 0.06em;
+      min-height: 18px;
     }
 
-    .firebase-status {
-      display: flex;
+    .pw-btn {
+      width: 100%;
+      padding: 17px;
+      background: linear-gradient(135deg, #f4a6b2 0%, #c8a0d8 100%);
+      border: none;
+      border-radius: var(--r-pill);
+      color: white;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: var(--font);
+      transition: transform 0.15s ease;
+      box-shadow: 0 6px 24px rgba(244,166,178,0.42);
+    }
+    .pw-btn:active { transform: scale(0.96); }
+
+    .pw-hint {
+      font-size: 11.5px;
+      color: var(--text-sub);
+      text-align: center;
+      opacity: 0.68;
+    }
+
+    /* ================================================================
+       Welcome Overlay
+    ================================================================ */
+    #welcome {
+      position: fixed;
+      inset: 0;
+      z-index: 300;
+      background: rgba(255,255,255,0.96);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      display: none;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 5px;
-      margin-top: 10px;
+      gap: 16px;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    #welcome.on  { display: flex; }
+    #welcome.vis { opacity: 1; }
+
+    .wel-heart {
+      font-size: 58px;
+      animation: hbeat 1.1s ease infinite;
+    }
+    @keyframes hbeat {
+      0%,100% { transform: scale(1); }
+      50%     { transform: scale(1.22); }
+    }
+    .wel-text {
+      font-size: 26px;
+      font-weight: 700;
+      font-style: italic;
+      color: var(--pink-deep);
+    }
+
+    /* ================================================================
+       MAIN SCREEN
+    ================================================================ */
+    #s-main { flex-direction: column; }
+
+    .main-scroll {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      padding: 0 14px;
+      padding-top:    max(calc(env(safe-area-inset-top,  0px) + 20px), 70px);
+      padding-bottom: max(calc(env(safe-area-inset-bottom,0px) + 40px), 56px);
+    }
+
+    .main-inner {
+      max-width: 480px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* ================================================================
+       Glass Card
+    ================================================================ */
+    .card {
+      background: rgba(255,255,255,0.68);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255,255,255,0.88);
+      border-radius: var(--r-card);
+      box-shadow: var(--shadow-s);
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(22px);
+      animation: cardIn 0.55s ease forwards;
+    }
+    @keyframes cardIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .card:nth-child(1) { animation-delay: 0.08s; }
+    .card:nth-child(2) { animation-delay: 0.16s; }
+    .card:nth-child(3) { animation-delay: 0.24s; }
+    .card:nth-child(4) { animation-delay: 0.32s; }
+    .card:nth-child(5) { animation-delay: 0.40s; }
+    .card:nth-child(6) { animation-delay: 0.48s; }
+    .card:nth-child(7) { animation-delay: 0.56s; }
+    .card:nth-child(8) { animation-delay: 0.64s; }
+
+    .card-pad { padding: 24px 22px; }
+
+    .clabel {
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      color: var(--pink-deep);
+      margin-bottom: 5px;
+    }
+    .ctitle {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 18px;
+    }
+
+    /* ================================================================
+       Header Card
+    ================================================================ */
+    .hcard {
+      padding: 26px 22px 20px;
+      text-align: center;
+    }
+    .couple-name {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      margin-bottom: 6px;
+    }
+    .couple-name .x {
+      color: var(--pink-deep);
+      margin: 0 8px;
+      font-weight: 400;
+    }
+    .hdate {
+      font-size: 11.5px;
+      color: var(--text-sub);
+      letter-spacing: 0.8px;
+    }
+
+    /* ================================================================
+       Photo Card
+    ================================================================ */
+    .photo-card {
+      aspect-ratio: 4/3;
+      position: relative;
+      min-height: 220px;
+    }
+    .photo-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .photo-ph {
+      width: 100%;
+      height: 100%;
+      min-height: 220px;
+      background: linear-gradient(145deg, #fde8f0 0%, #ede8f8 55%, #d8f0e8 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .photo-ph-icon { font-size: 52px; opacity: 0.45; }
+    .photo-ph-txt  { font-size: 13px; color: var(--text-sub); opacity: 0.7; }
+    .photo-ov {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.28), transparent);
+      padding: 22px 18px 14px;
+    }
+    .photo-label { color: white; font-size: 12px; font-weight: 500; opacity: 0.9; }
+
+    /* ================================================================
+       Countdown Card
+    ================================================================ */
+    .cd-big {
+      text-align: center;
+      margin-bottom: 18px;
+    }
+    .cd-num {
+      font-size: 76px;
+      font-weight: 900;
+      line-height: 1;
+      background: linear-gradient(135deg, #f0889c, #b888d8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .cd-day-lbl {
+      font-size: 15px;
+      color: var(--text-sub);
+      font-weight: 600;
+      margin-top: 2px;
+      letter-spacing: 0.5px;
+    }
+    .cd-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .cd-unit {
+      background: rgba(255,255,255,0.78);
+      border: 1px solid rgba(244,166,178,0.22);
+      border-radius: 16px;
+      padding: 13px 6px;
+      text-align: center;
+    }
+    .cd-unit-n {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+    .cd-unit-l {
       font-size: 10px;
-      color: var(--muted);
+      color: var(--text-sub);
+      margin-top: 4px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
     }
 
-    .fb-dot {
-      width: 7px;
-      height: 7px;
+    /* ================================================================
+       Message Card
+    ================================================================ */
+    .msg-card { padding: 28px 22px 24px; position: relative; }
+    .msg-quote {
+      position: absolute;
+      top: 12px; left: 18px;
+      font-size: 72px;
+      line-height: 1;
+      color: rgba(244,166,178,0.22);
+      font-family: Georgia, serif;
+      font-weight: 900;
+      user-select: none;
+      pointer-events: none;
+    }
+    .msg-text {
+      font-size: 16px;
+      line-height: 1.85;
+      color: var(--text);
+      position: relative;
+      z-index: 1;
+      padding-top: 18px;
+    }
+    .msg-from {
+      margin-top: 14px;
+      font-size: 12px;
+      color: var(--text-sub);
+      text-align: right;
+      font-style: italic;
+    }
+
+    /* ================================================================
+       Anniversary Card
+    ================================================================ */
+    .ann-card {
+      padding: 28px 22px;
+      text-align: center;
+      background: linear-gradient(145deg, rgba(253,232,240,0.75), rgba(237,232,248,0.75)) !important;
+    }
+    .ann-num {
+      font-size: 68px;
+      font-weight: 900;
+      line-height: 1;
+      background: linear-gradient(135deg, #e0789a, #9888d8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .ann-unit-txt {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-sub);
+      margin-left: 3px;
+      -webkit-text-fill-color: var(--text-sub);
+    }
+    .ann-label {
+      font-size: 13.5px;
+      color: var(--text-sub);
+      margin-top: 8px;
+      font-weight: 500;
+    }
+
+    /* ================================================================
+       Dream Board
+    ================================================================ */
+    .dream-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 4px;
+    }
+    .dream-chip {
+      background: rgba(255,255,255,0.82);
+      border: 1px solid rgba(244,166,178,0.22);
+      border-radius: 50px;
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .dream-chip:active {
+      transform: scale(0.93);
+      background: rgba(244,166,178,0.12);
+    }
+
+    /* ================================================================
+       AI Recommend Card
+    ================================================================ */
+    .ai-card {
+      background: linear-gradient(145deg, rgba(253,232,240,0.85), rgba(237,232,248,0.85)) !important;
+    }
+    .ai-inner {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .ai-emoji { font-size: 44px; flex-shrink: 0; line-height: 1; }
+    .ai-body  { flex: 1; }
+    .ai-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .ai-desc {
+      font-size: 12px;
+      color: var(--text-sub);
+      line-height: 1.55;
+      margin-bottom: 14px;
+    }
+    .ai-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 11px 20px;
+      background: linear-gradient(135deg, #f4a6b2, #c8a0d8);
+      border: none;
+      border-radius: var(--r-pill);
+      color: white;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: var(--font);
+      box-shadow: 0 5px 18px rgba(244,166,178,0.38);
+      transition: transform 0.15s ease;
+    }
+    .ai-btn:active { transform: scale(0.95); }
+
+    /* ================================================================
+       Cost Modal
+    ================================================================ */
+    #modal-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 400;
+      background: rgba(0,0,0,0.28);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    #modal-bg.on  { display: flex; }
+    #modal-bg.vis { opacity: 1; }
+
+    .modal-sheet {
+      width: 100%;
+      max-width: 480px;
+      background: rgba(255,255,255,0.97);
+      border-radius: 28px 28px 0 0;
+      padding: 0 22px 22px;
+      padding-bottom: max(calc(env(safe-area-inset-bottom, 0px) + 22px), 28px);
+      box-shadow: 0 -10px 48px rgba(0,0,0,0.12);
+      transform: translateY(100%);
+      transition: transform 0.42s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    #modal-bg.vis .modal-sheet { transform: translateY(0); }
+
+    .modal-handle {
+      width: 38px; height: 4px;
+      background: rgba(0,0,0,0.1);
+      border-radius: 50px;
+      margin: 14px auto 22px;
+    }
+    .modal-title {
+      font-size: 18px;
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .modal-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .modal-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 16px;
+      background: rgba(253,232,240,0.45);
+      border-radius: 14px;
+    }
+    .modal-row-l { font-size: 14px; color: var(--text-sub); }
+    .modal-row-v { font-size: 16px; font-weight: 700; }
+
+    .modal-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 18px;
+      background: linear-gradient(135deg, rgba(253,232,240,0.7), rgba(237,232,248,0.7));
+      border-radius: 16px;
+      margin-bottom: 14px;
+    }
+    .modal-total-l { font-size: 14px; font-weight: 700; }
+    .modal-total-v {
+      font-size: 24px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #e0789a, #9888d8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .modal-note {
+      font-size: 12px;
+      color: var(--text-sub);
+      text-align: center;
+      line-height: 1.7;
+      padding: 12px 14px;
+      background: rgba(237,232,248,0.38);
+      border-radius: 12px;
+      margin-bottom: 18px;
+    }
+    .modal-close {
+      width: 100%;
+      padding: 15px;
+      background: rgba(244,166,178,0.1);
+      border: 1.5px solid rgba(244,166,178,0.28);
+      border-radius: var(--r-pill);
+      color: var(--pink-deep);
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: var(--font);
+      transition: transform 0.15s ease;
+    }
+    .modal-close:active { transform: scale(0.97); }
+
+    /* ================================================================
+       App Card
+    ================================================================ */
+    .app-card {
+      padding: 28px 22px 26px;
+      text-align: center;
+      background: linear-gradient(145deg, rgba(253,232,240,0.8), rgba(237,232,248,0.8)) !important;
+    }
+    .app-title {
+      font-size: 17px;
+      font-weight: 800;
+      line-height: 1.45;
+      margin-bottom: 18px;
+    }
+    .app-features {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      margin-bottom: 22px;
+      text-align: left;
+    }
+    .app-feat {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--text-sub);
+    }
+    .feat-dot {
+      width: 6px; height: 6px;
       border-radius: 50%;
-      background: #ccc;
+      background: var(--pink-deep);
       flex-shrink: 0;
-      transition: background 0.4s;
     }
-
-    .fb-dot.ok      { background: #4caf50; }
-    .fb-dot.error   { background: #e57373; }
-    .fb-dot.loading { background: #ffb74d; animation: pulse 1s infinite; }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50%       { opacity: 0.3; }
+    .app-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 15px 30px;
+      background: linear-gradient(135deg, #2a2a2a, #484848);
+      border: none;
+      border-radius: var(--r-pill);
+      color: white;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: var(--font);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.18);
+      transition: transform 0.15s ease;
     }
+    .app-btn:active { transform: scale(0.96); }
 
-    /* ═══════════════════════════
-       KEYFRAMES
-    ═══════════════════════════ */
-    @keyframes heartbeat {
-      0%, 100% { transform: scale(1); }
-      20%       { transform: scale(1.1); }
-      40%       { transform: scale(0.97); }
-      60%       { transform: scale(1.07); }
+    /* ================================================================
+       Responsive
+    ================================================================ */
+    @media (min-width: 480px) {
+      .main-scroll {
+        padding-left: 24px;
+        padding-right: 24px;
+        padding-top: 84px;
+      }
     }
-
-    @media (max-width: 360px) {
-      .days-num    { font-size: 58px; }
-      .airport-code { font-size: 30px; }
-      .meta-val    { font-size: 11px; }
+    @media (max-height: 680px) {
+      .pw-wrap  { gap: 22px; }
+      .lock-ring { width: 72px; height: 72px; border-radius: 22px; }
+      .lock-svg  { width: 32px; height: 32px; }
+      .pw-title  { font-size: 26px; }
     }
   </style>
 </head>
-
 <body>
-  <div class="ticket">
 
-    <!-- ── Header ── -->
-    <header class="ticket-header">
-      <div class="th-left">
-        <div class="th-title">우리 곧 만나요</div>
+<!-- Animated gradient background -->
+<div id="bg"></div>
+
+<!-- Password screen background decorations -->
+<div id="bg-decor"></div>
+
+<!-- Floating hearts (main screen only) -->
+<div id="hearts-wrap"></div>
+
+<!-- Language switcher (always visible) -->
+<div id="lang-bar">
+  <button class="lang-btn" data-lang="ja" onclick="setLang('ja')">JP</button>
+  <button class="lang-btn" data-lang="ko" onclick="setLang('ko')">KR</button>
+  <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+</div>
+
+<!-- Welcome overlay (shown after password success) -->
+<div id="welcome">
+  <div class="wel-heart">💕</div>
+  <div class="wel-text" id="wel-text">Welcome, my love</div>
+</div>
+
+<!-- ================================================================
+     SCREEN 1 — Love Password
+================================================================ -->
+<div class="screen" id="s-pw">
+  <div class="pw-wrap">
+
+    <div class="lock-box">
+      <!-- Lock icon with unlock animation -->
+      <div class="lock-ring" id="lock-ring">
+        <svg class="lock-svg" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.2"
+             stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2.5"/>
+          <path id="shackle" d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        <div class="particles" id="particles"></div>
       </div>
-      <div class="th-badge">NOV·11·2025 ✈</div>
-    </header>
 
-    <!-- ── Photo ── -->
-    <div class="ticket-photo" id="photoArea">
-      <img id="photoA" alt="" />
-      <img id="photoB" alt="" />
-      <div class="photo-placeholder" id="photoPlaceholder" style="display:none"></div>
+      <!-- Titles -->
+      <div class="pw-titles">
+        <div class="pw-title" id="pw-t">Love Password</div>
+        <div class="pw-sub"  id="pw-s">ふたりだけの秘密の合言葉を入力してください</div>
+      </div>
     </div>
 
-    <!-- ── Body ── -->
-    <div class="ticket-body">
+    <!-- Password form card -->
+    <div class="pw-card">
+      <input class="pw-input" id="pw-in" type="password"
+             placeholder="••••" maxlength="20"
+             autocomplete="off" inputmode="text"/>
+      <div class="err-msg" id="err-msg"></div>
+      <button class="pw-btn" id="pw-btn" onclick="tryPassword()">
+        <span id="pw-btn-lbl">開ける</span>
+      </button>
+      <div class="pw-hint" id="pw-hint">Hint : 記念日かも？</div>
+    </div>
 
-      <!-- Route -->
-      <div class="route-row">
-        <div class="airport">
-          <div class="airport-code">BKK</div>
-          <div class="airport-city">Bangkok</div>
+  </div>
+</div>
+
+<!-- ================================================================
+     SCREEN 2 — Love Page
+================================================================ -->
+<div class="screen" id="s-main">
+  <div class="main-scroll">
+    <div class="main-inner">
+
+      <!-- 1. Header -->
+      <div class="card hcard">
+        <div class="couple-name">
+          <span id="n1"></span><span class="x">×</span><span id="n2"></span>
         </div>
-        <div class="flight-mid">
-          <div class="flight-track">
-            <span class="plane-anim">✈️</span>
-            <div class="flight-dash"></div>
+        <div class="hdate" id="hdate"></div>
+      </div>
+
+      <!-- 2. Photo -->
+      <div class="card photo-card" id="photo-card"></div>
+
+      <!-- 3. Countdown -->
+      <div class="card card-pad">
+        <div class="clabel" id="cd-lbl">NEXT DATE</div>
+        <div class="ctitle" id="cd-ttl">次に会える日まで</div>
+        <div class="cd-big">
+          <div class="cd-num" id="cd-d">--</div>
+          <div class="cd-day-lbl" id="cd-dl">日</div>
+        </div>
+        <div class="cd-grid">
+          <div class="cd-unit">
+            <div class="cd-unit-n" id="cd-h">--</div>
+            <div class="cd-unit-l" id="cd-hl">時間</div>
           </div>
-          <div class="round-trip">Round Trip</div>
-        </div>
-        <div class="airport">
-          <div class="airport-code">ICN</div>
-          <div class="airport-city">Seoul</div>
-        </div>
-      </div>
-
-      <!-- Meta bar -->
-      <div class="meta-bar">
-        <div class="meta-cell">
-          <div class="meta-label">Passenger</div>
-          <div class="meta-val" id="namesText">--</div>
-        </div>
-        <div class="meta-divider"></div>
-        <div class="meta-cell">
-          <div class="meta-label">Date</div>
-          <div class="meta-val" id="metaDate">--</div>
-        </div>
-        <div class="meta-divider"></div>
-        <div class="meta-cell">
-          <div class="meta-label">Class</div>
-          <div class="meta-val">LOVE ♡</div>
+          <div class="cd-unit">
+            <div class="cd-unit-n" id="cd-m">--</div>
+            <div class="cd-unit-l" id="cd-ml">分</div>
+          </div>
+          <div class="cd-unit">
+            <div class="cd-unit-n" id="cd-s">--</div>
+            <div class="cd-unit-l" id="cd-sl">秒</div>
+          </div>
         </div>
       </div>
 
-      <!-- Countdown -->
-      <div class="countdown-block" id="countdownBlock" style="opacity:0;transition:opacity 0.4s">
-        <div class="days-display">
-          <span class="days-num" id="daysNumber">--</span>
-          <span class="days-unit">일</span>
+      <!-- 4. Message -->
+      <div class="card msg-card">
+        <div class="msg-quote">"</div>
+        <div class="msg-text" id="msg-txt"></div>
+        <div class="msg-from" id="msg-from">— 今日のメッセージ</div>
+      </div>
+
+      <!-- 5. Anniversary -->
+      <div class="card ann-card">
+        <div class="clabel" id="ann-lbl">ANNIVERSARY</div>
+        <div style="margin-top:12px">
+          <span class="ann-num" id="ann-n">0</span><span class="ann-unit-txt" id="ann-u">日</span>
         </div>
-        <div class="sleep-text" id="sleepText"></div>
-        <div class="today-msg" id="todayMsg"></div>
-        <div class="love-msg" id="loveMessage"></div>
-        <div class="date-chip" id="dateChip"></div>
+        <div class="ann-label" id="ann-l">付き合って</div>
+      </div>
+
+      <!-- 6. Dream Board -->
+      <div class="card card-pad">
+        <div class="clabel" id="drm-lbl">DREAM BOARD</div>
+        <div class="ctitle" id="drm-ttl">二人で叶えたいこと</div>
+        <div class="dream-grid" id="drm-grid"></div>
+      </div>
+
+      <!-- 7. AI Recommendation -->
+      <div class="card card-pad ai-card">
+        <div class="ai-inner">
+          <div class="ai-emoji">🇰🇷</div>
+          <div class="ai-body">
+            <div class="ai-title" id="ai-ttl">韓国旅行のプレゼントを探してみる？</div>
+            <div class="ai-desc"  id="ai-dsc">AIが旅行プランを探します。</div>
+            <button class="ai-btn" onclick="openModal()">
+              <span id="ai-btn-lbl">費用を見てみる</span> →
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8. App card -->
+      <div class="card app-card">
+        <div class="app-title" id="app-ttl">もっと二人だけの時間を<br>楽しみませんか？</div>
+        <div class="app-features" id="app-feats"></div>
+        <button class="app-btn">
+          <span>📱</span><span id="app-btn-lbl">アプリで続きを見る</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     Cost Modal (bottom sheet)
+================================================================ -->
+<div id="modal-bg" onclick="modalBgClick(event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="m-ttl">🇰🇷 韓国旅行 費用イメージ</div>
+    <div class="modal-rows">
+      <div class="modal-row">
+        <span class="modal-row-l" id="m-fly">✈️ 航空券</span>
+        <span class="modal-row-v">¥28,000〜</span>
+      </div>
+      <div class="modal-row">
+        <span class="modal-row-l" id="m-hot">🏨 ホテル</span>
+        <span class="modal-row-v">¥12,000〜/泊</span>
       </div>
     </div>
-
-    <!-- ── Tear Line ── -->
-    <div class="tear-line">
-      <div class="tear-notch"></div>
-      <div class="tear-dashes"></div>
-      <span class="tear-scissors">✂</span>
-      <div class="tear-dashes"></div>
-      <div class="tear-notch"></div>
+    <div class="modal-total">
+      <span class="modal-total-l" id="m-tot-l">合計目安</span>
+      <span class="modal-total-v">¥52,000〜</span>
     </div>
+    <div class="modal-note" id="m-note">将来的にはAIが旅行プランを探し、<br>予約手続きまでサポートします。</div>
+    <button class="modal-close" id="m-close" onclick="closeModal()">閉じる</button>
+  </div>
+</div>
 
-    <!-- ── Stub ── -->
-    <div class="ticket-stub">
+<!-- ================================================================
+     JavaScript
+================================================================ -->
+<script>
+/* ================================================================
+   CONFIG — ここを変更するだけでカスタマイズできます
+   Future: replace with Firebase Remote Config or Firestore reads
+================================================================ */
+const CONFIG = {
+  password:        "1111",
+  coupleName:      "Aki × Youngjae",
+  meetingDate:     "2026-07-16T00:00:00",
+  anniversaryDate: "2025-11-11",
+  message:         "今日も少しだけ会える日に近づいたね。",
+  photo:           "images/photo.jpg"
+};
 
-      <div class="time-weather-grid">
-        <div class="tw-chip">
-          <div class="tw-flag">🇰🇷 Seoul</div>
-          <div class="tw-time" id="koreaTime">--:--</div>
-          <div class="tw-weather" id="koreaWeather">--</div>
-        </div>
-        <div class="tw-chip">
-          <div class="tw-flag">🇹🇭 Bangkok</div>
-          <div class="tw-time" id="thaiTime">--:--</div>
-          <div class="tw-weather" id="thaiWeather">--</div>
-        </div>
-      </div>
+/* ================================================================
+   i18n — 多言語辞書
+================================================================ */
+const T = {
+  ja: {
+    pwTitle:  "Love Password",
+    pwSub:    "ふたりだけの秘密の合言葉を入力してください",
+    pwBtn:    "開ける",
+    pwHint:   "Hint : 記念日かも？",
+    pwErr:    "ちょっと違うかも。もう一度だけ♡",
+    welText:  "Welcome, my love",
+    cdLbl:    "NEXT DATE",   cdTtl: "次に会える日まで",
+    cdDL:     "日",  cdHL: "時間",  cdML: "分",  cdSL: "秒",
+    msgFrom:  "— 今日のメッセージ",
+    annLbl:   "ANNIVERSARY", annL: "付き合って",  annU: "日",
+    drmLbl:   "DREAM BOARD", drmTtl: "二人で叶えたいこと",
+    dreams:   ["🇰🇷 韓国旅行","💍 ペアリング","🏨 ホテルステイ","🌸 桜を見に行く","✈️ 世界旅行"],
+    aiTtl:    "韓国旅行のプレゼントを探してみる？",
+    aiDsc:    "AIが旅行プランを探します。",
+    aiBtn:    "費用を見てみる",
+    mTtl:     "🇰🇷 韓国旅行 費用イメージ",
+    mFly:     "✈️ 航空券",  mHot: "🏨 ホテル",
+    mTotL:    "合計目安",
+    mNote:    "将来的にはAIが旅行プランを探し、<br>予約手続きまでサポートします。",
+    mClose:   "閉じる",
+    appTtl:   "もっと二人だけの時間を<br>楽しみませんか？",
+    appFeats: ["毎日のカウントダウン","AIラブレター","思い出アルバム","二人だけの日記"],
+    appBtn:   "アプリで続きを見る"
+  },
+  ko: {
+    pwTitle:  "Love Password",
+    pwSub:    "둘만의 비밀 암호를 입력해 주세요",
+    pwBtn:    "열기",
+    pwHint:   "Hint : 기념일일지도?",
+    pwErr:    "조금 다른 것 같아. 다시 한 번만♡",
+    welText:  "어서와, 내 사랑 💕",
+    cdLbl:    "NEXT DATE",   cdTtl: "다음에 만날 날까지",
+    cdDL:     "일",  cdHL: "시간",  cdML: "분",  cdSL: "초",
+    msgFrom:  "— 오늘의 메시지",
+    annLbl:   "ANNIVERSARY", annL: "사귄 지",     annU: "일",
+    drmLbl:   "DREAM BOARD", drmTtl: "둘이서 이루고 싶은 것",
+    dreams:   ["🇰🇷 한국 여행","💍 커플링","🏨 호텔 스테이","🌸 벚꽃 보러 가기","✈️ 세계 여행"],
+    aiTtl:    "한국 여행 선물을 찾아볼까요?",
+    aiDsc:    "AI가 여행 플랜을 찾아드립니다.",
+    aiBtn:    "비용 알아보기",
+    mTtl:     "🇰🇷 한국 여행 비용 안내",
+    mFly:     "✈️ 항공권",  mHot: "🏨 호텔",
+    mTotL:    "합계 예상",
+    mNote:    "앞으로 AI가 여행 플랜을 찾고,<br>예약까지 도와드릴 예정입니다.",
+    mClose:   "닫기",
+    appTtl:   "더 많은 둘만의 시간을<br>즐겨보세요",
+    appFeats: ["매일 카운트다운","AI 러브레터","추억 앨범","둘만의 일기"],
+    appBtn:   "앱에서 계속 보기"
+  },
+  en: {
+    pwTitle:  "Love Password",
+    pwSub:    "Enter your secret code, just for two",
+    pwBtn:    "Open",
+    pwHint:   "Hint: Maybe your anniversary?",
+    pwErr:    "Almost! Try one more time ❤️",
+    welText:  "Welcome, my love",
+    cdLbl:    "NEXT DATE",   cdTtl: "Days until we meet",
+    cdDL:     "days", cdHL: "hours", cdML: "min",  cdSL: "sec",
+    msgFrom:  "— Today's Message",
+    annLbl:   "ANNIVERSARY", annL: "Together for",  annU: "days",
+    drmLbl:   "DREAM BOARD", drmTtl: "Our Dreams Together",
+    dreams:   ["🇰🇷 Korea Trip","💍 Couple Rings","🏨 Hotel Stay","🌸 Cherry Blossoms","✈️ World Trip"],
+    aiTtl:    "Find a gift for your Korea trip?",
+    aiDsc:    "AI will find a travel plan for you.",
+    aiBtn:    "See the cost",
+    mTtl:     "🇰🇷 Korea Trip Cost Guide",
+    mFly:     "✈️ Flights",  mHot: "🏨 Hotel",
+    mTotL:    "Total estimate",
+    mNote:    "Soon, AI will find travel plans<br>and help with booking too.",
+    mClose:   "Close",
+    appTtl:   "Want more time<br>just for two?",
+    appFeats: ["Daily countdown","AI love letters","Memory album","Private diary"],
+    appBtn:   "Continue in the app"
+  }
+};
 
-      <div class="date-row">
-        <span class="date-row-label">📅 次に会う日</span>
-        <input type="date" id="meetDateInput" />
-      </div>
+/* ================================================================
+   State
+================================================================ */
+let lang    = 'ja';
+let cdTimer = null;
 
-      <div class="barcode-wrap" id="barcode"></div>
+/* ================================================================
+   Utility
+================================================================ */
+const $ = id => document.getElementById(id);
+const pad = n => String(n).padStart(2, '0');
+const esc = s => String(s)
+  .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+// Double rAF to ensure CSS transitions fire after display change
+const raf2 = fn => requestAnimationFrame(() => requestAnimationFrame(fn));
 
-      <p class="footer-note">오늘도 사랑해 · 보고 싶어 · 조금만 더 기다리자</p>
-      <div class="firebase-status">
-        <div class="fb-dot loading" id="fbDot"></div>
-      </div>
-    </div>
+/* ================================================================
+   Language
+================================================================ */
+function detectLang() {
+  const l = (navigator.language || 'ja').toLowerCase();
+  if (l.startsWith('ko')) return 'ko';
+  if (l.startsWith('ja')) return 'ja';
+  return 'en';
+}
 
-  </div><!-- /ticket -->
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('on', b.dataset.lang === l);
+  });
+  applyTrans();
+}
 
-  <!-- Firebase SDK (compat) -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+function applyTrans() {
+  const t = T[lang];
+  // Password screen
+  $('pw-t').textContent       = t.pwTitle;
+  $('pw-s').textContent       = t.pwSub;
+  $('pw-btn-lbl').textContent = t.pwBtn;
+  $('pw-hint').textContent    = t.pwHint;
+  // Welcome
+  $('wel-text').textContent   = t.welText;
+  // Countdown
+  $('cd-lbl').textContent     = t.cdLbl;
+  $('cd-ttl').textContent     = t.cdTtl;
+  $('cd-dl').textContent      = t.cdDL;
+  $('cd-hl').textContent      = t.cdHL;
+  $('cd-ml').textContent      = t.cdML;
+  $('cd-sl').textContent      = t.cdSL;
+  // Message
+  $('msg-from').textContent   = t.msgFrom;
+  // Anniversary
+  $('ann-lbl').textContent    = t.annLbl;
+  $('ann-l').textContent      = t.annL;
+  $('ann-u').textContent      = t.annU;
+  // Dream Board
+  $('drm-lbl').textContent    = t.drmLbl;
+  $('drm-ttl').textContent    = t.drmTtl;
+  buildDreams(t.dreams);
+  // AI
+  $('ai-ttl').textContent     = t.aiTtl;
+  $('ai-dsc').textContent     = t.aiDsc;
+  $('ai-btn-lbl').textContent = t.aiBtn;
+  // Modal
+  $('m-ttl').textContent      = t.mTtl;
+  $('m-fly').textContent      = t.mFly;
+  $('m-hot').textContent      = t.mHot;
+  $('m-tot-l').textContent    = t.mTotL;
+  $('m-note').innerHTML       = t.mNote;
+  $('m-close').textContent    = t.mClose;
+  // App card
+  $('app-ttl').innerHTML      = t.appTtl;
+  $('app-btn-lbl').textContent = t.appBtn;
+  buildFeats(t.appFeats);
+}
 
-  <script>
-    // =====================================================
-    // Firebase 初期化
-    // =====================================================
-    const firebaseConfig = {
-      apiKey:            "AIzaSyB_KsLcdRmGUwoqluGLhXM0jQEQJ0gJBCc",
-      authDomain:        "love-countdown-dd3fb.firebaseapp.com",
-      databaseURL:       "https://love-countdown-dd3fb-default-rtdb.firebaseio.com",
-      projectId:         "love-countdown-dd3fb",
-      storageBucket:     "love-countdown-dd3fb.firebasestorage.app",
-      messagingSenderId: "427338561458",
-      appId:             "1:427338561458:web:1ddd1db31cdfcfd2fe96ab"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+/* ================================================================
+   Password functions
+================================================================ */
+function tryPassword() {
+  const inp = $('pw-in');
+  if (inp.value === CONFIG.password) {
+    successUnlock();
+  } else {
+    failUnlock(inp);
+  }
+}
 
-    // =====================================================
-    // 設定値
-    // =====================================================
-    const CONFIG = {
-      nextMeetDate:   "2026-08-23",
-      girlfriendName: "연제",
-      boyfriendName:  "아키라",
-      message:        "조금만 더 기다리면 만날 수 있어요",
-    };
+function successUnlock() {
+  $('pw-btn').disabled = true;
+  $('lock-ring').classList.add('open');
+  burstParticles();
 
-    // =====================================================
-    // 天気 (Open-Meteo API)
-    // =====================================================
-    const LOCATIONS = {
-      korea:   { name: "서울",    latitude: 37.5665, longitude: 126.9780, timezone: "Asia/Seoul"   },
-      thailand:{ name: "Bangkok", latitude: 13.7563, longitude: 100.5018, timezone: "Asia/Bangkok" }
-    };
+  // Show welcome overlay
+  setTimeout(() => {
+    const w = $('welcome');
+    w.classList.add('on');
+    raf2(() => w.classList.add('vis'));
+  }, 480);
 
-    function weatherCodeToText(code, lang = "ko") {
-      const map = {
-        ko: { 0:"맑음", 1:"대체로 맑음", 2:"부분적으로 흐림", 3:"흐림", 45:"안개", 48:"서리 안개",
-              51:"약한 이슬비", 53:"이슬비", 55:"강한 이슬비", 61:"약한 비", 63:"비", 65:"강한 비",
-              71:"약한 눈", 73:"눈", 75:"강한 눈", 80:"약한 소나기", 81:"소나기", 82:"강한 소나기", 95:"천둥번개" },
-        ja: { 0:"晴れ", 1:"ほぼ晴れ", 2:"一部くもり", 3:"くもり", 45:"霧", 48:"霧氷",
-              51:"弱い霧雨", 53:"霧雨", 55:"強い霧雨", 61:"弱い雨", 63:"雨", 65:"強い雨",
-              71:"弱い雪", 73:"雪", 75:"強い雪", 80:"弱いにわか雨", 81:"にわか雨", 82:"強いにわか雨", 95:"雷雨" }
-      };
-      return map[lang][code] || (lang === "ko" ? "날씨 정보" : "天気情報");
-    }
+  // Transition to main
+  setTimeout(() => {
+    goMain();
+    const w = $('welcome');
+    w.style.transition = 'opacity 0.45s ease';
+    w.style.opacity = '0';
+    setTimeout(() => {
+      w.classList.remove('on','vis');
+      w.style.cssText = '';
+    }, 450);
+  }, 2100);
+}
 
-    async function fetchWeather(location, lang) {
-      const url = `https://api.open-meteo.com/v1/forecast`
-        + `?latitude=${location.latitude}`
-        + `&longitude=${location.longitude}`
-        + `&current=temperature_2m,weather_code`
-        + `&timezone=${encodeURIComponent(location.timezone)}`;
-      const res  = await fetch(url);
-      const data = await res.json();
-      const temp = Math.round(data.current.temperature_2m);
-      return `${location.name} ${temp}°C · ${weatherCodeToText(data.current.weather_code, lang)}`;
-    }
+function failUnlock(inp) {
+  $('err-msg').textContent = T[lang].pwErr;
+  inp.classList.add('err');
+  setTimeout(() => inp.classList.remove('err'), 420);
+  setTimeout(() => { inp.value = ''; inp.focus(); }, 300);
+}
 
-    // =====================================================
-    // カウントダウン韓国語メッセージ (残り日数 0〜30)
-    // =====================================================
-    const MESSAGES = [
-      "드디어 만난다. ❤️",                        // 0
-      "내일 드디어 만난다.",                        // 1
-      "오늘은 괜히 더 설렌다.",                     // 2
-      "빨리 안아주고 싶다.",                        // 3
-      "거의 다 왔어.",                             // 4
-      "점점 실감이 난다.",                          // 5
-      "벌써부터 엄청 설레.",                        // 6
-      "다음 주면 보네.",                            // 7
-      "이제 진짜 코앞이네.",                        // 8
-      "자꾸 만나는 날만 생각해.",                   // 9
-      "벌써부터 설렌다.",                           // 10
-      "빨리 만나고 싶다.",                          // 11
-      "점점 더 기대된다.",                          // 12
-      "이젠 진짜 얼마 안 남은 거잖아.",             // 13
-      "슬슬 설레기 시작한다.",                      // 14
-      "자꾸 만나는 날 상상이 돼.",                  // 15
-      "이제 거의 다 온 거 같아.",                   // 16
-      "매일 줄어가는 게 느껴진다.",                 // 17
-      "자꾸 설레.",                               // 18
-      "곧 보네. 뭐 할지 자꾸 생각해.",             // 19
-      "오늘도 하루 가까워졌네.",                    // 20
-      "생각보다 빨리 왔네.",                        // 21
-      "오늘도 하루 더 가까워졌어.",                 // 22
-      "자꾸 기대돼.",                             // 23
-      "만나면 뭐 할지 자꾸 생각해.",               // 24
-      "뭐 먹을지 생각해놨어.",                      // 25
-      "슬슬 카운트가 짧아지네.",                    // 26
-      "자꾸 만나는 날 카운트하게 돼.",              // 27
-      "한 달 조금 안 됐네.",                       // 28
-      "이제 한 달도 안 남았어.",                    // 29
-      "이제 진짜 얼마 안 남았네.",                  // 30
-    ];
+function burstParticles() {
+  const box    = $('particles');
+  box.innerHTML = '';
+  const colors = ['#f4a6b2','#d8a0d0','#a888d8','#f8b8a0','#a8d8f0'];
+  const n = 14;
+  for (let i = 0; i < n; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'p-dot';
+    const a  = (i / n) * 360;
+    const r  = 32 + Math.random() * 28;
+    const tx = (Math.cos(a * Math.PI / 180) * r).toFixed(1) + 'px';
+    const ty = (Math.sin(a * Math.PI / 180) * r).toFixed(1) + 'px';
+    dot.style.cssText = `background:${colors[i % colors.length]};--tx:${tx};--ty:${ty}`;
+    box.appendChild(dot);
+    dot.getBoundingClientRect(); // force reflow
+    dot.classList.add('burst');
+  }
+}
 
-    function getCountdownMessage(days) {
-      if (days <= 0) return MESSAGES[0];
-      if (days <= 30) return MESSAGES[days];
-      return "";
-    }
+$('pw-in').addEventListener('keydown', e => {
+  if (e.key === 'Enter') tryPassword();
+});
 
-    // =====================================================
-    // カウントダウン
-    // =====================================================
-    function daysLeft() {
-      const today  = new Date();
-      const d0     = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-      const target = new Date(CONFIG.nextMeetDate + "T00:00:00");
-      return Math.max(0, Math.ceil((target - d0) / 86400000));
-    }
+/* ================================================================
+   Screen management
+================================================================ */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('on','vis'));
+  const el = $(id);
+  el.classList.add('on');
+  raf2(() => el.classList.add('vis'));
+}
 
-    function formatDateShort(dateStr) {
-      return new Intl.DateTimeFormat("ko-KR", {
-        year: "numeric", month: "2-digit", day: "2-digit", weekday: "short"
-      }).format(new Date(dateStr + "T00:00:00"));
-    }
+function goMain() {
+  showScreen('s-main');
+  initMain();
+}
 
-    function updateCountdown() {
-      const n = daysLeft();
-      document.getElementById("namesText").textContent =
-        `${CONFIG.girlfriendName} ♡ ${CONFIG.boyfriendName}`;
-      document.getElementById("metaDate").textContent = formatDateShort(CONFIG.nextMeetDate);
+/* ================================================================
+   Main screen initialisation
+================================================================ */
+function initMain() {
+  // Couple names
+  const parts = CONFIG.coupleName.split('×').map(s => s.trim());
+  $('n1').textContent = parts[0] || '';
+  $('n2').textContent = parts[1] || '';
 
-      const unitEl    = document.querySelector(".days-unit");
-      const todayMsgEl = document.getElementById("todayMsg");
-      if (n === 0) {
-        document.getElementById("daysNumber").textContent  = "오늘";
-        document.getElementById("sleepText").textContent   = "";
-        document.getElementById("loveMessage").textContent = "";
-        document.getElementById("dateChip").textContent    = "";
-        unitEl.style.display = "none";
-        todayMsgEl.style.display = "inline-block";
-        todayMsgEl.textContent   = "드디어 만나는 날이야 🎉";
-        launchFireworks();
-        launchHearts();
-      } else {
-        document.getElementById("daysNumber").textContent  = n;
-        document.getElementById("sleepText").textContent   = `あと${n}回寝たら会えるね`;
-        document.getElementById("loveMessage").textContent = getCountdownMessage(n);
-        document.getElementById("dateChip").textContent    = `📅 ${formatDateShort(CONFIG.nextMeetDate)}`;
-        unitEl.style.display = "";
-        todayMsgEl.style.display = "none";
-      }
-    }
+  // Today's date in header
+  const now = new Date();
+  $('hdate').textContent =
+    `${now.getFullYear()}.${pad(now.getMonth()+1)}.${pad(now.getDate())}`;
 
-    // =====================================================
-    // 写真 (Firebase Storage + Realtime Database)
-    // =====================================================
+  buildPhoto();
+  $('msg-txt').textContent = CONFIG.message;
 
-    // 写真 URL をリアルタイム監視
-    db.ref("photos").on("value", snapshot => {
-      if (!snapshot.exists()) return;
-      const urls = Object.values(snapshot.val()).filter(Boolean);
-      if (urls.length) startSlideshow(urls);
-    });
+  // Countdown — restart clean
+  if (cdTimer) clearInterval(cdTimer);
+  tickCountdown();
+  cdTimer = setInterval(tickCountdown, 1000);
 
-    const imgA        = document.getElementById("photoA");
-    const imgB        = document.getElementById("photoB");
-    const placeholder = document.getElementById("photoPlaceholder");
-    let   activeSlot  = "A";
-    let   photoPool   = [];
-    let   photoIdx    = 0;
-    let   slideshowId = null;
+  calcAnniversary();
+  applyTrans();   // builds dream chips & app features too
+  startHearts();
+}
 
-    function shuffle(arr) {
-      const a = [...arr];
-      for (let i = a.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [a[i], a[j]] = [a[j], a[i]];
-      }
-      return a;
-    }
+/* ================================================================
+   Photo
+================================================================ */
+function buildPhoto() {
+  const card = $('photo-card');
+  card.innerHTML = '';
 
-    function showNextPhoto() {
-      if (!photoPool.length) return;
-      const url = photoPool[photoIdx % photoPool.length];
-      photoIdx++;
-      if (photoIdx >= photoPool.length) {
-        photoPool = shuffle(photoPool);
-        photoIdx  = 0;
-      }
-      if (activeSlot === "A") {
-        imgB.src = url; imgB.style.opacity = "1"; imgA.style.opacity = "0"; activeSlot = "B";
-      } else {
-        imgA.src = url; imgA.style.opacity = "1"; imgB.style.opacity = "0"; activeSlot = "A";
-      }
-    }
+  if (CONFIG.photo) {
+    const img = document.createElement('img');
+    img.className = 'photo-img';
+    img.src       = CONFIG.photo;
+    img.alt       = CONFIG.coupleName;
+    img.onerror   = () => { card.innerHTML = ''; showPhotoPlaceholder(card); };
+    card.appendChild(img);
 
-    function startSlideshow(urls) {
-      if (!urls.length) return;
-      photoPool = shuffle(urls);
-      photoIdx  = 0;
-      placeholder.style.display = "none";
-      showNextPhoto();
-      if (slideshowId) clearInterval(slideshowId);
-      slideshowId = setInterval(showNextPhoto, 5000);
-    }
+    const ov = document.createElement('div');
+    ov.className = 'photo-ov';
+    ov.innerHTML = `<div class="photo-label">📷 ${esc(CONFIG.coupleName)}</div>`;
+    card.appendChild(ov);
+  } else {
+    showPhotoPlaceholder(card);
+  }
+}
 
+function showPhotoPlaceholder(card) {
+  card.innerHTML = `
+    <div class="photo-ph">
+      <div class="photo-ph-icon">🌸</div>
+      <div class="photo-ph-txt">${esc(CONFIG.coupleName)}</div>
+    </div>`;
+}
 
-    // =====================================================
-    // 時刻
-    // =====================================================
-    function updateTimes() {
-      const now = new Date();
-      document.getElementById("koreaTime").textContent = new Intl.DateTimeFormat("ko-KR", {
-        timeZone: "Asia/Seoul",   hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false
-      }).format(now);
-      document.getElementById("thaiTime").textContent = new Intl.DateTimeFormat("ja-JP", {
-        timeZone: "Asia/Bangkok", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false
-      }).format(now);
-    }
+/* ================================================================
+   Countdown — auto-updates every second
+================================================================ */
+function tickCountdown() {
+  const diff = new Date(CONFIG.meetingDate) - new Date();
 
-    // =====================================================
-    // 天気
-    // =====================================================
-    async function updateCountryInfo() {
-      try {
-        const [koW, thW] = await Promise.all([
-          fetchWeather(LOCATIONS.korea,    "ko"),
-          fetchWeather(LOCATIONS.thailand, "ja")
-        ]);
-        document.getElementById("koreaWeather").textContent = koW;
-        document.getElementById("thaiWeather").textContent  = thW;
-      } catch {
-        document.getElementById("koreaWeather").textContent = "--";
-        document.getElementById("thaiWeather").textContent  = "--";
-      }
-    }
+  if (diff <= 0) {
+    $('cd-d').textContent = '0';
+    $('cd-h').textContent = $('cd-m').textContent = $('cd-s').textContent = '00';
+    return;
+  }
 
-    // =====================================================
-    // 日付ピッカー (Firebase Realtime Database でリアルタイム同期)
-    // =====================================================
-    const meetDateInput = document.getElementById("meetDateInput");
-    const countdownBlock = document.getElementById("countdownBlock");
+  $('cd-d').textContent = Math.floor(diff / 864e5);
+  $('cd-h').textContent = pad(Math.floor((diff % 864e5) / 36e5));
+  $('cd-m').textContent = pad(Math.floor((diff % 36e5)  / 6e4));
+  $('cd-s').textContent = pad(Math.floor((diff % 6e4)   / 1e3));
+}
 
-    // 古い localStorage キャッシュを削除
-    localStorage.removeItem("meetDate");
+/* ================================================================
+   Anniversary — auto-calculates from CONFIG.anniversaryDate
+================================================================ */
+function calcAnniversary() {
+  const days = Math.max(0,
+    Math.floor((new Date() - new Date(CONFIG.anniversaryDate)) / 864e5));
+  $('ann-n').textContent = days;
+}
 
-    // Firebase が正しい日付を返してから表示
-    db.ref("meetDate").on("value", snapshot => {
-      const date = snapshot.val();
-      if (date) {
-        CONFIG.nextMeetDate = date;
-        meetDateInput.value = date;
-        updateCountdown();
-        countdownBlock.style.opacity = "1";
-      }
-    });
+/* ================================================================
+   Dream Board
+================================================================ */
+function buildDreams(items) {
+  const g = $('drm-grid');
+  g.innerHTML = '';
+  items.forEach(item => {
+    const d = document.createElement('div');
+    d.className   = 'dream-chip';
+    d.textContent = item;
+    g.appendChild(d);
+  });
+}
 
-    meetDateInput.addEventListener("change", () => {
-      if (!meetDateInput.value) return;
-      db.ref("meetDate").set(meetDateInput.value);
-    });
+/* ================================================================
+   App features list
+================================================================ */
+function buildFeats(items) {
+  const c = $('app-feats');
+  c.innerHTML = '';
+  items.forEach(f => {
+    const d = document.createElement('div');
+    d.className = 'app-feat';
+    d.innerHTML = `<div class="feat-dot"></div><span>${esc(f)}</span>`;
+    c.appendChild(d);
+  });
+}
 
-    // =====================================================
-    // 花火エフェクト (0日限定)
-    // =====================================================
-    function launchHearts() {
-      const container = document.createElement("div");
-      container.style.cssText =
-        "position:fixed;inset:0;pointer-events:none;z-index:9998;overflow:hidden;";
-      document.body.appendChild(container);
+/* ================================================================
+   Modal
+================================================================ */
+function openModal() {
+  const bg = $('modal-bg');
+  bg.classList.add('on');
+  raf2(() => bg.classList.add('vis'));
+  document.body.style.overflow = 'hidden';
+}
 
-      const style = document.createElement("style");
-      style.textContent = `
-        @keyframes heartRise {
-          0%   { transform: translateY(0) translateX(0) scale(1); opacity: 1; }
-          25%  { transform: translateY(-25vh) translateX(12px) scale(1.1); }
-          50%  { transform: translateY(-50vh) translateX(-8px) scale(0.95); }
-          75%  { transform: translateY(-75vh) translateX(10px) scale(1.05); }
-          100% { transform: translateY(-105vh) translateX(0) scale(0.8); opacity: 0; }
-        }
-        .heart-particle {
-          position: absolute;
-          bottom: -60px;
-          font-style: normal;
-          animation: heartRise linear forwards;
-          will-change: transform, opacity;
-        }
-      `;
-      document.head.appendChild(style);
+function closeModal() {
+  const bg = $('modal-bg');
+  bg.classList.remove('vis');
+  setTimeout(() => {
+    bg.classList.remove('on');
+    document.body.style.overflow = '';
+  }, 380);
+}
 
-      const HEARTS   = ["🩷","💕","💗","💖","💝","🌸","💓","❤️"];
-      const SIZES    = [18, 22, 28, 34, 40, 48, 22, 26, 32];
-      const total    = 60;
-      const duration = 5000;
+function modalBgClick(e) {
+  if (e.target === $('modal-bg')) closeModal();
+}
 
-      for (let i = 0; i < total; i++) {
-        setTimeout(() => {
-          const el = document.createElement("span");
-          el.className = "heart-particle";
-          const emoji = HEARTS[Math.floor(Math.random() * HEARTS.length)];
-          const size  = SIZES[Math.floor(Math.random() * SIZES.length)];
-          const left  = 2 + Math.random() * 96;
-          const dur   = 2.8 + Math.random() * 2.2;
-          el.textContent = emoji;
-          el.style.cssText += `left:${left}%;font-size:${size}px;animation-duration:${dur}s;`;
-          container.appendChild(el);
-          setTimeout(() => el.remove(), dur * 1000);
-        }, (duration / total) * i * (0.6 + Math.random() * 0.8));
-      }
+/* ================================================================
+   Heart animation — gentle floating hearts over main screen
+================================================================ */
+const HEARTS = ['💕','♡','💗','🤍','💞','✿'];
 
-      setTimeout(() => {
-        container.remove();
-        style.remove();
-      }, duration + 3500);
-    }
+function startHearts() {
+  const wrap = $('hearts-wrap');
+  function spawn() {
+    const el  = document.createElement('div');
+    el.className  = 'fheart';
+    el.textContent = HEARTS[Math.floor(Math.random() * HEARTS.length)];
+    const dur  = 9 + Math.random() * 8;
+    const del  = Math.random() * 2;
+    const dx   = ((Math.random() - 0.5) * 70).toFixed(1) + 'px';
+    el.style.cssText = `
+      left:${4 + Math.random() * 88}%;
+      bottom:-30px;
+      font-size:${11 + Math.random() * 14}px;
+      animation-duration:${dur}s;
+      animation-delay:${del}s;
+      --dx:${dx};
+    `;
+    wrap.appendChild(el);
+    setTimeout(() => el.remove(), (dur + del + 0.3) * 1000);
+  }
+  spawn();
+  setInterval(spawn, 2800);
+}
 
-    function launchFireworks() {
-      const canvas = document.createElement("canvas");
-      canvas.style.cssText =
-        "position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999;";
-      document.body.appendChild(canvas);
-      const ctx = canvas.getContext("2d");
+/* ================================================================
+   Background decorations for password screen
+================================================================ */
+function initDecor() {
+  const c = $('bg-decor');
+  ['♡','🔒','✉','♡','🗝','♡','💌'].forEach(icon => {
+    const el  = document.createElement('div');
+    el.className  = 'decor-item';
+    el.textContent = icon;
+    const dur = 22 + Math.random() * 20;
+    el.style.cssText = `
+      left:${4 + Math.random() * 88}%;
+      font-size:${36 + Math.random() * 36}px;
+      animation-duration:${dur}s;
+      animation-delay:${-(Math.random() * dur)}s;
+    `;
+    c.appendChild(el);
+  });
+}
 
-      canvas.width  = window.innerWidth;
-      canvas.height = window.innerHeight;
+/* ================================================================
+   Boot
+   Future: swap initDecor / showScreen for Firebase Auth check here
+================================================================ */
+function init() {
+  lang = detectLang();
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('on', b.dataset.lang === lang);
+  });
+  applyTrans();
+  initDecor();
+  showScreen('s-pw');
+  setTimeout(() => $('pw-in').focus(), 550);
+}
 
-      const COLORS = [
-        "#e977a5","#c99dff","#ff8fb1","#ffb3d1",
-        "#f9c6e0","#d4a8ff","#ff6699","#ffcc00","#66ccff"
-      ];
-
-      const particles = [];
-
-      function spawnBurst(x, y) {
-        const color = COLORS[Math.floor(Math.random() * COLORS.length)];
-        for (let i = 0; i < 60; i++) {
-          const angle  = (Math.PI * 2 / 60) * i;
-          const speed  = 2 + Math.random() * 5;
-          particles.push({
-            x, y,
-            vx: Math.cos(angle) * speed,
-            vy: Math.sin(angle) * speed,
-            alpha: 1,
-            radius: 2 + Math.random() * 2,
-            color,
-            gravity: 0.08
-          });
-        }
-      }
-
-      const bursts = [
-        { x: 0.25, y: 0.25, delay: 0   },
-        { x: 0.75, y: 0.20, delay: 300 },
-        { x: 0.50, y: 0.15, delay: 600 },
-        { x: 0.15, y: 0.50, delay: 900 },
-        { x: 0.85, y: 0.45, delay: 1200},
-        { x: 0.40, y: 0.30, delay: 1500},
-        { x: 0.60, y: 0.25, delay: 1800},
-      ];
-
-      bursts.forEach(b => {
-        setTimeout(() => spawnBurst(
-          canvas.width  * b.x,
-          canvas.height * b.y
-        ), b.delay);
-      });
-
-      let frame;
-      function tick() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        for (let i = particles.length - 1; i >= 0; i--) {
-          const p = particles[i];
-          p.x += p.vx;
-          p.y += p.vy;
-          p.vy += p.gravity;
-          p.vx *= 0.98;
-          p.alpha -= 0.014;
-          if (p.alpha <= 0) { particles.splice(i, 1); continue; }
-          ctx.globalAlpha = p.alpha;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-          ctx.fillStyle = p.color;
-          ctx.fill();
-        }
-        ctx.globalAlpha = 1;
-        if (particles.length > 0) {
-          frame = requestAnimationFrame(tick);
-        } else {
-          canvas.remove();
-        }
-      }
-      frame = requestAnimationFrame(tick);
-
-      setTimeout(() => {
-        cancelAnimationFrame(frame);
-        canvas.remove();
-      }, 5000);
-    }
-
-    // =====================================================
-    // バーコード装飾
-    // =====================================================
-    function generateBarcode() {
-      const bc = document.getElementById("barcode");
-      for (let i = 0; i < 48; i++) {
-        const bar = document.createElement("div");
-        bar.className = "bc-bar";
-        bar.style.width  = (Math.random() < 0.35 ? 3 : 1.5) + "px";
-        bar.style.height = (20 + Math.random() * 18) + "px";
-        bc.appendChild(bar);
-      }
-    }
-    generateBarcode();
-
-    // =====================================================
-    // Firebase 接続ステータス表示
-    // =====================================================
-    (function checkFirebase() {
-      const dot = document.getElementById("fbDot");
-      firebase.database().ref(".info/connected").on("value", snap => {
-        dot.className = snap.val() === true ? "fb-dot ok" : "fb-dot error";
-      });
-    })();
-
-    // =====================================================
-    // 起動
-    // =====================================================
-    updateTimes();
-    updateCountryInfo();
-
-    setInterval(updateTimes,       1000);
-    setInterval(updateCountdown,  60000);
-    setInterval(updateCountryInfo, 30 * 60 * 1000);
-  </script>
+init();
+</script>
 </body>
 </html>
